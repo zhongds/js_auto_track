@@ -1,0 +1,22 @@
+{
+  "name": "js_auto_track",
+  "version": "1.0.0",
+  "description": "js的无痕埋点",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhongds/js_auto_track.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zhongds/js_auto_track/issues"
+  },
+  "homepage": "https://github.com/zhongds/js_auto_track#readme",
+  "dependencies": {
+    "typescript": "^4.9.5"
+  }
+}
