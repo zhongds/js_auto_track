@@ -16,10 +16,11 @@ function getAnonymousId() {
 const osInfo = getOsInfo();
 let CommonMessage: ICommonMessage = {
   $event_id: '',
+  $time: Date.now(),
   $anonymous_id: getAnonymousId(),
   $session_id: randomString(),
   $sdk_type: 'js',
-  $sdk_version: '', // 构建时替换
+  $sdk_version: '{{VERSION}}', // 构建时替换
   $os: osInfo.name, 
   $os_version: osInfo.version,
   $os_language: navigator.language,

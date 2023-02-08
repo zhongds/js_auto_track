@@ -1,4 +1,4 @@
-import { getCommonMessage } from "../config/message";
+import { getCommonMessage } from "./config/message";
 import { handlePV } from "./handler";
 
 /**
@@ -16,7 +16,8 @@ export function hookHistorySate(key: 'pushState'|'replaceState'): void {
   if (window[`@@track_${key}`]) return;
   window[`@@track_${key}`] = history[key];
   history[key] = function (){
-    window[`@@track_${key}`].call(history, ...arguments);
+    const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
+    window[`@@track_${key}`].call(history, ...args);
     setPage();
   }
 }
@@ -28,7 +29,8 @@ export function hookPopstate(): void {
   if (window['@@track_popstate']) return;
   window['@@track_popstate'] = window.onpopstate;
   window.onpopstate = function () {
-    window['@@track_popstate'].call(window, ...arguments);
+    const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
+    window['@@track_popstate'].call(window, ...args);
     setPage();
   }
 }

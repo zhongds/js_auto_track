@@ -53,7 +53,7 @@ function getTargetElement(e: EventTarget): Element|null {
   }
   let result: Element|null = null;
   do {
-    result = e.parentNode;
+    result = e.parentElement;
   } while(result && DEF_COLLECT_ELM_TYPE.indexOf(result.nodeName.toLowerCase()) === -1)
   return result;
 }

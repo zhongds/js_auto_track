@@ -21,11 +21,11 @@ export default class WrapError {
     let result;
     switch (event.type) {
       case 'error': {
-        result = event instanceof ErrorEvent ? extractJSError(event)  : extractResourceError(event);
+        result = event instanceof ErrorEvent ? this.extractJSError(event)  : this.extractResourceError(event);
         break;
       }
       case 'unhandledrejection': {
-        result = extractPromiseError(event);
+        result = this.extractPromiseError(event);
         break;
       }
       report(result);
@@ -53,7 +53,7 @@ export default class WrapError {
   // 捕获资源异常
   extractResourceError(e: Event): IErrorMessage{
     const commonMsg = getCommonMessage();
-    const target = e.target || {};
+    const target = e.target as any;
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
@@ -68,9 +68,9 @@ export default class WrapError {
   }
 
   // 捕获promise异常
-  extractPromiseError(e: Event): IErrorMessage{
-    let commonMsg = getCommonMessage()
-    let msg: IErrorMessage = {
+  extractPromiseError(e: any): IErrorMessage{
+    const commonMsg = getCommonMessage()
+    const data: IErrorMessage = {
       ...commonMsg,
       ...{
         $event_id: '$error',

@@ -35,7 +35,7 @@
  * @returns string
  */
 export function getBrowserVersion(): string {
-  const Sys = {}; 
+  const Sys = {} as any; 
   const ua = navigator.userAgent.toLowerCase(); 
   let s; 
   (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? Sys.ie = s[1] :
@@ -76,9 +76,10 @@ export function getOsInfo() {
   };
   for (let key in MAP_EXP) {
     const uaMatch = ua.match(MAP_EXP[key]);
-    if (!!uaMatch &&) {
+    if (!!uaMatch) {
       os.name = key;
       os.version = key === 'Ios' ? uaMatch[2].replace(/_/g, '.') : uaMatch[2];
+      break;
     }
   }
   return os;

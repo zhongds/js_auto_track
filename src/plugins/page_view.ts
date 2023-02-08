@@ -1,3 +1,5 @@
+import { getCommonMessage } from "../config/message";
+
 export function getPageViewMessage(): IPageViewMessage|null {
   const comMsg = getCommonMessage();
   const perf = getPerfMessage();
@@ -24,7 +26,7 @@ const supported = {
  */
 function getPerfMessage(): IPagePerformance {
   const times = {} as IPagePerformance;
-  let t = window.performance.timing;
+  let t = window.performance.timing as any;
 
   times.$fmp = 0; // 首屏时间 (渲染节点增量最大的时间点)
   if (supported.getEntriesByType) {
@@ -46,7 +48,7 @@ function getPerfMessage(): IPagePerformance {
 
   times.$tti = Math.round(t.domInteractive - t.fetchStart); // 首次可交互时间
 
-  times.$ready = Math.round(t.domContentLoadedEventEnd - t.fetchStar)t; // HTML加载完成时间
+  times.$ready = Math.round(t.domContentLoadedEventEnd - t.fetchStart); // HTML加载完成时间
 
   times.$load_on = Math.round(t.loadEventStart - t.fetchStart); // 页面完全加载时间
 

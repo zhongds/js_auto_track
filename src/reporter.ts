@@ -1,7 +1,8 @@
+import { Config } from "./config/config";
 import { warn } from "./utils/tool";
 
 export function report(data: ICommonMessage) {
-  
+  console.log('上报数据', data);
 }
 
 

@@ -24,7 +24,7 @@ export function off(eventName: string, fn: EventListener): void {
  */
 export function rewriteEventStopPropagation(fn: EventListener): void {
   const originFn = Event.prototype.stopPropagation;
-  Event.prototype.stopPropagation = function(e: Event) {
+  Event.prototype.stopPropagation = function() {
     fn(this);
     originFn.call(this);
   }
@@ -36,7 +36,7 @@ export function rewriteEventStopPropagation(fn: EventListener): void {
  * @param lastPath 上一个元素的selector路径
  * @returns selector
  */
-export function getElmSelector(target: EventTarget|Element, lastPath: string?): string {
+export function getElmSelector(target: EventTarget|Element, lastPath?: string): string {
   if (!(target instanceof Element)) {
     return lastPath ? lastPath : '';
   }
@@ -63,7 +63,7 @@ export function getElmSelector(target: EventTarget|Element, lastPath: string?): 
   }
   cls = isAddPosition ? tempCls : cls;
   const newPath = lastPath ? `${cls} > ${lastPath}` : cls;
-  return getElmSelector(target.parentNode, newPath);
+  return getElmSelector(target.parentElement, newPath);
 }
 
 export const warn: any = function () {

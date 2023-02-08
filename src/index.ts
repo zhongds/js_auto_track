@@ -1,6 +1,6 @@
 import { Config, IConfig, setConfig } from './config/config';
-import { handleClick } from './handler';
-import { hookHistorySate, hookHttp, hookPopstate } from './hook';
+import { handleClick, handleResource } from './handler';
+import { hookHistorySate, hookPopstate } from './hook';
 import WrapError from './plugins/error';
 import { on, rewriteEventStopPropagation } from './utils/tool';
 
@@ -12,11 +12,11 @@ export default class AutoTrackObj {
   init(option: IConfig) {
     setConfig(option);
 
-    Config.enableClick && this.addListenClick();
-    Config.enablePV && this.addListenRouterChange();
+    Config.enableClick && this.addListenClick(); // done
+    Config.enablePV && this.addListenRouterChange(); // done
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
-    Config.enableHttp && this.addListenHttp(); // done
+    Config.enableHttp && this.addListenHttp(); 
   }
 
   private addListenClick() {
@@ -37,10 +37,6 @@ export default class AutoTrackObj {
     hookPopstate();
   }
 
-  private sendPerf() {
-    handlePerf()
-  }
-
   // 发送资源
   private sendResource() {
     'complete' === window.document.readyState ? handleResource() : on('load', handleResource);
@@ -51,6 +47,6 @@ export default class AutoTrackObj {
   }
 
   private addListenHttp() {
-    hookHttp();
+
   }
 }

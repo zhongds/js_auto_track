@@ -1,4 +1,4 @@
-type EventType = '$element_click' | '$page_view' | '$page_leave' | '$config_reload';
+type EventType = '' | '$element_click' | '$page_view' | '$page_leave' | '$config_reload';
 type NetworkType = 'slow-2g' | '2g' | '3g' | '4g';
 type ClickType = 'single_click' | 'double_click';
 type APMType = '$error' | '$performance' | '$fetch';
@@ -11,7 +11,7 @@ interface ICommonMessage {
   $category_id?: string, // 事件分类，手动设置
   $channel_id?: string, // 渠道id，初始化设置
   $page_id: string, // 没啥用
-  $user_id: string, // 登录用户id，手动设置
+  $user_id?: string, // 登录用户id，手动设置
   $session_id?: string, // 每次加载生成的随机数
   $device_id?: string,
   $guid?: string,
@@ -60,8 +60,8 @@ interface IErrorMessage extends ICommonMessage {
   $err_msg?: string, // 信息
   $err_detail?: string, // 错误栈
   $err_file?: string, // 出错文件
-  $err_line?: string, // 行
-  $err_col?: string, // 列
+  $err_line?: number, // 行
+  $err_col?: number, // 列
 }
 
 interface IPagePerformance {
