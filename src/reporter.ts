@@ -10,8 +10,8 @@ function sendImg() {
 }
 
 
-function sendBeacon(e: ReportData) {
+function sendBeacon(data) {
   window && window.navigator && "function" == typeof window.navigator.sendBeacon 
-    ? window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(e))
+    ? window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(data))
     : warn("navigator.sendBeacon not surported")
 }

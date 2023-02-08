@@ -37,14 +37,11 @@ let CommonMessage: ICommonMessage = {
   $domain: location.host,
   $referrer: document.referrer,
   $title: document.title,
+  $charset: document.charset || document.characterSet,
 }
 
 export function setAppId(appId: string) {
   CommonMessage.$app_id = appId;
-}
-
-export function setCategoryId(categoryId: string) {
-  CommonMessage.$category_id = categoryId;
 }
 
 export function setChannelId(channelId: string) {

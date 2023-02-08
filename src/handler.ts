@@ -1,4 +1,5 @@
-import { getClickEventMessage, getCommonMessage } from "./config/message";
+import { getClickEventMessage } from "./plugins/click_event";
+import { getPageViewMessage } from "./plugins/page_view";
 import { report } from "./reporter";
 
 /**
@@ -9,16 +10,19 @@ export function handleClick(e: Event) {
   report(data);
 }
 
-/**
- * 捕获点击事件
- */
-export function handleDbClick(e: Event) {
-  
+export function handlePV() {
+  const data = getPageViewMessage();
+  report(data);
 }
 
+/**
+ * 捕获双击事件
+ */
+export function handleDbClick(e: Event) {
+    
+}
 
+export function handleResource() {
 
-export function handlePV(e: Event) {
-  
 }
 

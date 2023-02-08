@@ -1,9 +1,10 @@
 type EventType = '$element_click' | '$page_view' | '$page_leave' | '$config_reload';
 type NetworkType = 'slow-2g' | '2g' | '3g' | '4g';
-type ClickType = 'single_click' | 'double_click'
+type ClickType = 'single_click' | 'double_click';
+type APMType = '$error' | '$performance' | '$fetch';
 
 interface ICommonMessage {
-  $event_id: EventType,
+  $event_id: EventType | APMType,
   $anonymous_id: string, // 加载时生成随机数，保存在localStorage，下次直接拿
   $time: number, // 当前时间戳
   $app_id?: string, // 初始化设置
@@ -33,6 +34,7 @@ interface ICommonMessage {
   $url: string, // location.href
   $referrer: string, // 上个页面地址
   $title: string, // 页面标题
+  $charset: string, // 页面编码
 }
 
 
@@ -46,7 +48,7 @@ interface IClickEventMessage extends ICommonMessage {
   $click_type?: ClickType, // 单击/双击 
 }
 
-interface IPageViewMessage extends ICommonMessage {
+interface IPageViewMessage extends ICommonMessage, IPagePerformance {
   
 }
 
@@ -54,3 +56,28 @@ interface IPageLeaveMessage extends ICommonMessage {
   $duration: number, // 时间戳，页面停留时长
 }
 
+interface IErrorMessage extends ICommonMessage {
+  $err_msg?: string, // 信息
+  $err_detail?: string, // 错误栈
+  $err_file?: string, // 出错文件
+  $err_line?: string, // 行
+  $err_col?: string, // 列
+}
+
+interface IPagePerformance {
+  $fmp: number, // 首屏时间
+  $fpt: number, // 白屏时间
+  $tti: number, // 首次可交互时间
+  $ready: number, // HTML加载完成时间
+  $load_on: number, // 页面完全加载时间
+  $first_byte: number, // 首包时间
+  $dns: number, // dns查询耗时
+  $tcp: number, // tcp连接耗时
+  $ttfb: number, // 请求响应耗时
+  $trans: number, // 内容传输耗时
+  $dom: number, // dom解析耗时
+  $res: number, // 同步资源加载耗时
+  $ssl_link: number, // SSL安全连接耗时
+  $redirect: number, // 重定向时间
+  $unloadTime: number, // 上一个页面的卸载耗时
+}
