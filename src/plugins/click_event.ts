@@ -45,7 +45,7 @@ function getTargetElement(e: EventTarget): Element|null {
     return null
   }
   let nodeName = e.nodeName.toLowerCase();
-  if (Config.collectClickElmType[nodeName] && nodeName !== 'div') {
+  if (DEF_COLLECT_ELM_TYPE.indexOf(nodeName) !== -1 || (Config.collectClickElmType[nodeName] && nodeName !== 'div')) {
     return e;
   }
   if (nodeName === 'div' && Config.collectClickElmType['div'] && e.children.length === 0) {
