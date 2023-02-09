@@ -48,8 +48,8 @@ interface IClickEventMessage extends ICommonMessage {
   $click_type?: ClickType, // 单击/双击 
 }
 
-interface IPageViewMessage extends ICommonMessage, IPagePerformance {
-  
+interface IPageViewMessage extends ICommonMessage {
+  $performance: IPagePerformance,
 }
 
 interface IPageLeaveMessage extends ICommonMessage {

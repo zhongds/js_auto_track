@@ -6,7 +6,7 @@ export function getPageViewMessage(): IPageViewMessage|null {
   const data: IPageViewMessage = {
     ...comMsg,
     $event_id: '$page_view',
-    ...perf,
+    $performance: perf,
   }
   return data;
 }

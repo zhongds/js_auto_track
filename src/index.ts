@@ -1,6 +1,6 @@
 import { Config, IConfig, setConfig } from './config/config';
 import { handleClick, handleResource } from './handler';
-import { hookHistorySate, hookPopstate } from './hook';
+import { hookHistorySate, hookPopstate, setPage } from './hook';
 import WrapError from './plugins/error';
 import { on, rewriteEventStopPropagation } from './utils/tool';
 
@@ -17,6 +17,8 @@ export default class AutoTrackObj {
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
     Config.enableHttp && this.addListenHttp(); 
+
+    this.addListenClose();
   }
 
   private addListenClick() {
@@ -32,6 +34,9 @@ export default class AutoTrackObj {
    * 3. pustState/replaceState => hash变化，路径变化, 不会触发popstate事件 => 重写这两个方法
    */
   private addListenRouterChange() {
+    // 首次加载设置页面变化
+    'complete' === window.document.readyState ? setPage() : on('load', setPage);
+
     hookHistorySate('pushState');
     hookHistorySate('replaceState');
     hookPopstate();
@@ -48,5 +53,11 @@ export default class AutoTrackObj {
 
   private addListenHttp() {
 
+  }
+
+  private addListenClose() {
+    on('beforeunload', function() {
+      console.log('页面关闭');
+    })
   }
 }
