@@ -10,6 +10,8 @@ const DEFAULT_CLICK_EL_TYPE = {
 }
 
 export interface IConfig {
+  appId: string, //
+  secret: string, // 密钥
   reportUrl: string, //上报地址
   enablePV?: boolean, //是否上报PV, 带上性能数据
   enableClick?: boolean, //是否上报点击事件
@@ -28,6 +30,8 @@ export interface IConfig {
 
 
 const defaultConfig: IConfig = {
+  appId: '',
+  secret: '',
   reportUrl: '',
   enablePV: true,
   enableClick: true,
