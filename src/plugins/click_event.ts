@@ -51,9 +51,9 @@ function getTargetElement(e: EventTarget): Element|null {
   if (nodeName === 'div' && Config.collectClickElmType['div'] && e.children.length === 0) {
     return e;
   }
-  let result: Element|null = null;
+  let result = e;
   do {
-    result = e.parentElement;
+    result = result.parentElement;
   } while(result && DEF_COLLECT_ELM_TYPE.indexOf(result.nodeName.toLowerCase()) === -1)
   return result;
 }

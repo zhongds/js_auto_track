@@ -12,9 +12,9 @@ export default class WrapError {
    */
   init() {
     // js错误或静态资源加载错误
-    on('error', this.handleError)
+    on('error', this.handleError.bind(this));
     //promise错误
-    on('unhandledrejection', this.handleError)
+    on('unhandledrejection', this.handleError.bind(this));
   }
 
   handleError(event: Event) {
@@ -28,8 +28,10 @@ export default class WrapError {
         result = this.extractPromiseError(event);
         break;
       }
-      report(result);
-    }
+      default:
+        break;
+      }
+    report(result);
   }
 
   // 捕获js异常

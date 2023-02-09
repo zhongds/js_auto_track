@@ -11,7 +11,7 @@ export default {
   output: {
     file: "dist/auto_track.js",
     format: "umd",
-    name: "auto_track"
+    name: "AutoTrackObj"
   },
   plugins: [
     replace({
