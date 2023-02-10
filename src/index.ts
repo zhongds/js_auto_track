@@ -18,6 +18,7 @@ export default class AutoTrackObj {
     Config.enableError && this.addListenError(); // done
     Config.enableHttp && this.addListenHttp(); 
 
+    console.log("配置====", Config);
     this.addListenClose();
   }
 

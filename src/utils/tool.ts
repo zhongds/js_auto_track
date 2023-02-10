@@ -42,7 +42,7 @@ export function getElmSelector(target: EventTarget|Element, lastPath?: string): 
   }
   const nodeName = target.nodeName.toLowerCase();
   if (target.id) {
-    return `${nodeName}#${target.id}`;
+    return `${nodeName}#${target.id} > ${lastPath}`;
   }
   if (nodeName === 'body') {
     return `body > ${lastPath}`;
