@@ -1,4 +1,4 @@
-import { genSpanId, getClickSpanId, getPageSpanId, getTraceId, setPageSpanId } from "../config/global";
+import { genSpanId, getClickSpanId, getPageSpanId, getParentPageSpanId, getTraceId, setPageSpanId } from "../config/global";
 import { getCommonMessage } from "../config/message";
 
 export function getPageViewMessage(): IPageViewMessage|null {
@@ -10,7 +10,7 @@ export function getPageViewMessage(): IPageViewMessage|null {
     $event_id: '$page_view',
     $trace_id: getTraceId(),
     $span_id: spanId,
-    $parent_span_id: getClickSpanId() || getTraceId(),
+    $parent_span_id: getParentPageSpanId(),
     $performance: perf,
   }
   setPageSpanId(spanId);
