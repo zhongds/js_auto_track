@@ -1,6 +1,6 @@
 import { getCommonMessage } from "../config/message";
 import { report } from "../reporter";
-import { on } from "../utils/tool";
+import { off, on } from "../utils/tool";
 
 export default class WrapError {
   constructor() {
@@ -81,5 +81,10 @@ export default class WrapError {
       }
     }
     return data;
+  }
+
+  destroy() {
+    off('error', this.handleError.bind(this));
+    off('unhandledrejection', this.handleError.bind(this));
   }
 }

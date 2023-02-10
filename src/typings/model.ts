@@ -87,3 +87,7 @@ interface IPagePerformance {
   $redirect: number, // 重定向时间
   $unloadTime: number, // 上一个页面的卸载耗时
 }
+
+interface IHttpPerfMessage {
+  
+}
