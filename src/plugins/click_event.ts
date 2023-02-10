@@ -6,6 +6,7 @@
  */
 
 import { Config } from "../config/config";
+import { genSpanId, getPageSpanId, getTraceId, setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../config/message";
 import { getElmSelector } from "../utils/tool";
 
@@ -21,10 +22,14 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
   if (!target) {
     return null;
   }
+  const spanId = genSpanId();
   const comMsg = getCommonMessage();
   const data: IClickEventMessage = {
     ...comMsg,
     $event_id: '$element_click',
+    $trace_id: getTraceId(),
+    $span_id: spanId,
+    $parent_span_id: getPageSpanId(),
     $element_type: target.nodeName.toLowerCase(),
     $element_id: target.id,
     $element_name: target.getAttribute('name'),
@@ -32,6 +37,7 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
     $element_content: target.innerHTML,
     $click_type: 'single_click',
   }
+  setClickSpanId(spanId);
   return data;
 }
 

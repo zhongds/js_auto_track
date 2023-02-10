@@ -39,6 +39,9 @@ interface ICommonMessage {
 
 
 interface IClickEventMessage extends ICommonMessage {
+  $trace_id: string, 
+  $span_id: string, // 
+  $parent_span_id: string, //
   $element_type: string, // 元素类型，如button，a等
   $element_id?: string, // 元素id
   $element_name?: string, // name属性
@@ -49,6 +52,9 @@ interface IClickEventMessage extends ICommonMessage {
 }
 
 interface IPageViewMessage extends ICommonMessage {
+  $trace_id: string, 
+  $span_id: string, // 
+  $parent_span_id: string, //
   $performance: IPagePerformance,
 }
 

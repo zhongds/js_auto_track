@@ -1,13 +1,19 @@
+import { genSpanId, getClickSpanId, getPageSpanId, getTraceId, setPageSpanId } from "../config/global";
 import { getCommonMessage } from "../config/message";
 
 export function getPageViewMessage(): IPageViewMessage|null {
   const comMsg = getCommonMessage();
   const perf = getPerfMessage();
+  const spanId = genSpanId();
   const data: IPageViewMessage = {
     ...comMsg,
     $event_id: '$page_view',
+    $trace_id: getTraceId(),
+    $span_id: spanId,
+    $parent_span_id: getClickSpanId() || getTraceId(),
     $performance: perf,
   }
+  setPageSpanId(spanId);
   return data;
 }
 
