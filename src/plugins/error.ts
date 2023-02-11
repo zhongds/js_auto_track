@@ -3,6 +3,7 @@ import { report } from "../reporter";
 import { off, on } from "../utils/tool";
 
 export default class WrapError {
+
   constructor() {
     this.init();
   }

@@ -1,11 +1,11 @@
 import { getCommonMessage } from "./config/message";
-import { handlePV } from "./handler";
+import PageViewPerf from "./plugins/page_view";
 
 /**
  * 页面变化，上报PV
  */
 export function setPage() {
-  handlePV();
+  PageViewPerf.reportPV();
 }
 
 /**
