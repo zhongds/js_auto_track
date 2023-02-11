@@ -77,5 +77,7 @@ function getPerfMessage(): IPagePerformance {
   times.$redirect = Math.round(t.redirectEnd - t.redirectStart); // 重定向时间
 
   times.$unloadTime = Math.round(t.unloadEventEnd - t.unloadEventStart); // 上一个页面的卸载耗时
+
+  times.$duration = Math.round(t.loadEventEnd - t.navigationStart);
   return times
 }

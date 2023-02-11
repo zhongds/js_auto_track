@@ -47,22 +47,27 @@ export function getElmSelector(target: EventTarget|Element, lastPath?: string): 
   if (nodeName === 'body') {
     return `body > ${lastPath}`;
   }
-  let cls = nodeName;
-  let tempCls = nodeName;
+  if (!target.parentElement) {
+    let cls = '';
+    target.classList.forEach(v => cls += `.${v}`);
+    return `${nodeName}${cls} > ${lastPath}`;
+  }
+  let path = nodeName;
+  let tempPath = nodeName;
   let isAddPosition = false;
-  const children = target.parentNode.children;
+  const children = target.parentElement.children;
   if (children.length > 1) {
     for(let i=0; i < children.length; i++) {
       const item = children[i];
       if (children[i] === target) {
-        tempCls = `${cls}:nth-child(${i+1})`;
+        tempPath = `${path}:nth-child(${i+1})`;
       } else if (nodeName === item.nodeName.toLowerCase()) {
         isAddPosition = true;
       }
     }
   }
-  cls = isAddPosition ? tempCls : cls;
-  const newPath = lastPath ? `${cls} > ${lastPath}` : cls;
+  path = isAddPosition ? tempPath : path;
+  const newPath = lastPath ? `${path} > ${lastPath}` : path;
   return getElmSelector(target.parentElement, newPath);
 }
 

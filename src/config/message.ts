@@ -1,6 +1,5 @@
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
-import { getElmSelector, randomString } from "../utils/tool";
-import { Config } from "./config";
+import { randomString } from "../utils/tool";
 
 const SDK_ANONYMOUS_ID_TAG = '$sdk_anonymous_id';
 

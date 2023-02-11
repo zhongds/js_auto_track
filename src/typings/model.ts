@@ -1,7 +1,7 @@
 type EventType = '' | '$element_click' | '$page_view' | '$page_leave' | '$config_reload';
 type NetworkType = 'slow-2g' | '2g' | '3g' | '4g';
 type ClickType = 'single_click' | 'double_click';
-type APMType = '$error' | '$performance' | '$fetch';
+type APMType = '$error' | '$resource_performance' | '$api';
 
 interface ICommonMessage {
   $event_id: EventType | APMType,
@@ -86,8 +86,18 @@ interface IPagePerformance {
   $ssl_link: number, // SSL安全连接耗时
   $redirect: number, // 重定向时间
   $unloadTime: number, // 上一个页面的卸载耗时
+  $duration: number, // 总耗时
 }
 
-interface IHttpPerfMessage {
+interface IApiPerfMessage extends ICommonMessage, IApiPerfData {
   
+}
+
+interface IApiPerfData {
+  $api_url: string,
+  $api_begin: number, // 开始时间
+  $api_duration: number, // 耗时
+  $api_status: number, // 状态码
+  $api_success: boolean, // 成功与否
+  $api_msg?: string, // 失败把信息上报
 }
