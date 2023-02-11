@@ -42,15 +42,15 @@ export function getElmSelector(target: EventTarget|Element, lastPath?: string): 
   }
   const nodeName = target.nodeName.toLowerCase();
   if (target.id) {
-    return `${nodeName}#${target.id} > ${lastPath}`;
+    return mergeElmPath(`${nodeName}#${target.id}`, lastPath);
   }
   if (nodeName === 'body') {
-    return `body > ${lastPath}`;
+    return mergeElmPath('body', lastPath);
   }
   if (!target.parentElement) {
     let cls = '';
     target.classList.forEach(v => cls += `.${v}`);
-    return `${nodeName}${cls} > ${lastPath}`;
+    return mergeElmPath(nodeName + cls, lastPath);
   }
   let path = nodeName;
   let tempPath = nodeName;
@@ -69,6 +69,10 @@ export function getElmSelector(target: EventTarget|Element, lastPath?: string): 
   path = isAddPosition ? tempPath : path;
   const newPath = lastPath ? `${path} > ${lastPath}` : path;
   return getElmSelector(target.parentElement, newPath);
+}
+
+function mergeElmPath(path: string, lastpath?: string): string {
+  return lastpath ? `${path} > ${lastpath}` : path;
 }
 
 export const warn: any = function () {
