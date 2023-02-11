@@ -18,7 +18,7 @@ export interface IConfig {
   enableError?: boolean, //是否上报错误
   enableRes?: boolean, //是否上报资源加载情况
   enableDbClick?: boolean, //是否上报双击事件
-  enableHttp?: boolean, //是否上报http请求数据
+  enableApi?: boolean, //是否上报http请求数据
   collectClickElmType: {
     i?: boolean,
     img?: boolean,
@@ -39,7 +39,7 @@ const defaultConfig: IConfig = {
 
   enableRes: false,
   enableDbClick: false,
-  enableHttp: false,
+  enableApi: false,
 
   collectClickElmType: {
     ...DEFAULT_CLICK_EL_TYPE,

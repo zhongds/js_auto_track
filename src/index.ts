@@ -1,6 +1,7 @@
 import { Config, IConfig, setConfig } from './config/config';
 import { handleClick, handleResource } from './handler';
 import { hookHistorySate, hookPopstate, setPage } from './hook';
+import ApiPerf from './plugins/Api_perf';
 import WrapError from './plugins/error';
 import { on, rewriteEventStopPropagation } from './utils/tool';
 
@@ -16,7 +17,7 @@ export default class AutoTrackObj {
     Config.enablePV && this.addListenRouterChange(); // done
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
-    Config.enableHttp && this.addListenHttp(); 
+    Config.enableApi && this.addListenApi(); 
 
     console.log("配置====", Config);
     this.addListenClose();
@@ -52,8 +53,8 @@ export default class AutoTrackObj {
     new WrapError();
   }
 
-  private addListenHttp() {
-
+  private addListenApi() {
+    new ApiPerf();
   }
 
   private addListenClose() {

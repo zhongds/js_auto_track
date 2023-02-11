@@ -78,6 +78,6 @@ function getPerfMessage(): IPagePerformance {
 
   times.$unloadTime = Math.round(t.unloadEventEnd - t.unloadEventStart); // 上一个页面的卸载耗时
 
-  times.$duration = Math.round(t.loadEventEnd - t.navigationStart);
+  times.$duration = Math.round(t.loadEventEnd - (t.navigationStart || 0));
   return times
 }
