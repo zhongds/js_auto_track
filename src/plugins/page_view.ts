@@ -41,6 +41,7 @@ export default class PageViewPerf {
         clearInterval(timer);
         const perf = this.genPerfMessage();
         data.$performance = perf;
+        data.$duration = perf.$duration;
         report(data);
       }
     }, 50)

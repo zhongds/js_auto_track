@@ -56,6 +56,7 @@ interface IPageViewMessage extends ICommonMessage {
   $span_id: string, // 
   $parent_span_id: string, //
   $performance: IPagePerformance,
+  $duration: number, // 总耗时
 }
 
 interface IPageLeaveMessage extends ICommonMessage {
