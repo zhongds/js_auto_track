@@ -1,4 +1,6 @@
+import { MemoryCache } from './config/cache';
 import { Config, IConfig, setConfig } from './config/config';
+import { setGlobalCache } from './config/global';
 import { handleClick, handleResource } from './handler';
 import { hookHistorySate, hookPopstate, setPage } from './hook';
 import ApiPerf from './plugins/Api_perf';
@@ -12,12 +14,14 @@ export default class AutoTrackObj {
 
   init(option: IConfig) {
     setConfig(option);
+    setGlobalCache(new MemoryCache());
 
     Config.enableClick && this.addListenClick(); // done
-    Config.enablePV && this.addListenRouterChange(); // done
+    Config.enablePV && this.addListenPV(); // done
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
     Config.enableApi && this.addListenApi(); 
+    Config.enableSPA && this.addListenStateChange();
 
     console.log("配置====", Config);
     this.addListenClose();
@@ -33,15 +37,20 @@ export default class AutoTrackObj {
    * 监听路由变化
    * 1. hash变化: 监听popstate
    * 2. 浏览器前进后退：监听popstate
-   * 3. pustState/replaceState => hash变化，路径变化, 不会触发popstate事件 => 重写这两个方法
    */
-  private addListenRouterChange() {
+  private addListenPV() {
     // 首次加载设置页面变化
     'complete' === window.document.readyState ? setPage() : on('load', setPage);
+    hookPopstate();
+  }
 
+  /**
+   * 监听路由变化
+   * 3. pustState/replaceState => hash变化，路径变化, 不会触发popstate事件 => 重写这两个方法
+   */
+   private addListenStateChange() {
     hookHistorySate('pushState');
     hookHistorySate('replaceState');
-    hookPopstate();
   }
 
   // 发送资源

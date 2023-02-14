@@ -14,6 +14,7 @@ export interface IConfig {
   secret: string, // 密钥
   reportUrl: string, //上报地址
   enablePV?: boolean, //是否上报PV, 带上性能数据
+  enableSPA?: boolean, //是否是单页应用，true-重写pushState和replaceState方法
   enableClick?: boolean, //是否上报点击事件
   enableError?: boolean, //是否上报错误
   enableRes?: boolean, //是否上报资源加载情况
@@ -37,6 +38,7 @@ const defaultConfig: IConfig = {
   enableClick: true,
   enableError: true,
 
+  enableSPA: false,
   enableRes: false,
   enableDbClick: false,
   enableApi: false,

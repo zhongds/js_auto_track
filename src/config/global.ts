@@ -1,6 +1,7 @@
 /**
  * 管理全局变量
  */
+import { MemoryCache } from './cache';
 import {generateSpanId, generateTraceId} from './trace';
 
 const traceId = generateTraceId();
@@ -17,6 +18,17 @@ const GlobalVar = {
     value: '',
     timestamp: 0,
   },
+  cache: {} as MemoryCache,
+}
+
+export function getGlobalCache() {
+  return GlobalVar.cache;
+}
+
+export function setGlobalCache(cache: MemoryCache) {
+  if (cache) {
+    GlobalVar.cache = cache;
+  }
 }
 
 export function getTraceId() {

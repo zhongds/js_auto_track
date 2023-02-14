@@ -1,12 +1,18 @@
 import { Config } from "./config/config";
 import { warn } from "./utils/tool";
 import md5 from 'md5';
+import { getGlobalCache } from "./config/global";
 
 export function report(data: ICommonMessage) {
   console.log('上报数据: ', data);
   if (!data) {
     return;
   }
+  if (cacheIntercept(data)) {
+    console.log('cache, not report ');
+    return;
+  }
+  
   if (false && window.navigator && "function" == typeof window.navigator.sendBeacon ) {
     window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(data))
   } else {
@@ -17,6 +23,25 @@ export function report(data: ICommonMessage) {
       
     })
   }
+}
+
+/**
+ * 缓存管理
+ */
+function cacheIntercept(data: ICommonMessage) {
+  const cloneData = {...data};
+  const cache = getGlobalCache();
+  if (cache) {
+    const time = cloneData.$time;
+    delete cloneData.$time;
+    const key = JSON.stringify(cloneData);
+    if (cache.get(key)) {
+      console.log('命中缓存，不上报');
+      return true;
+    }
+    cache.set(key, 1);
+  }
+  return false;
 }
 
 function sendImg(src, successCallback, errorCallback) {
