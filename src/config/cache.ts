@@ -32,14 +32,14 @@ export class MemoryCache implements ICache {
   }
 
   set(key: string, value: any, ttl = 60000): void {
-    // 如果超过最大缓存数, 删除头部的第一个缓存.
-    if (this.maxCache > 0 && this.cache.size >= this.maxCache) {
-      const deleteKey = Object.keys(this.cache)[0];
-      this.cache.delete(deleteKey);
-      if (this.timer[deleteKey]) {
-        clearTimeout(this.timer[deleteKey]);
-      }
-    }
+    // 如果超过最大缓存数, 删除头部的第一个缓存. TODO 兼容性
+    // if (this.maxCache > 0 && this.cache.size >= this.maxCache) {
+    //   const deleteKey = this.cache.keys().next().value;
+    //   this.cache.delete(deleteKey);
+    //   if (this.timer[deleteKey]) {
+    //     clearTimeout(this.timer[deleteKey]);
+    //   }
+    // }
     this.cache.set(key, value);
     if (ttl > 0) {
       this.timer[key] = setTimeout(() => {
