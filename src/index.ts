@@ -31,15 +31,15 @@ export default class AutoTrackObj {
     this.addListenClose();
   }
 
-  setUserId(fn: Function) {
+  static setUserId(fn: Function) {
     setLoginUserIdFn(fn);
   }
 
-  setUserSessionId(fn: Function) {
+  static setUserSessionId(fn: Function) {
     setUserSessionIdFn(fn);
   }
 
-  setDeviceId(fn: Function) {
+  static setDeviceId(fn: Function) {
     setDeviceIdFn(fn);
   }
 
