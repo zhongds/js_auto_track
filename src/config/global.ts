@@ -1,10 +1,21 @@
 /**
  * 管理全局变量
  */
-import { MemoryCache } from './cache';
-import {generateSpanId, generateTraceId} from './trace';
+import { MemoryCache } from '../models/cache';
+import {generateSpanId, generateTraceId} from '../models/trace/generator';
+import { getSearchKV } from '../utils/tool';
+import { URL_TRACE_ID_KEY } from './constant';
 
-const traceId = generateTraceId();
+// 1. 先从从url 获取trace_id 2. 获取不到再生成
+function getTraceFromUrlOrGen() {
+  let traceId = getSearchKV(location.href, URL_TRACE_ID_KEY);
+  if (!traceId) {
+    traceId = generateTraceId();
+  }
+  return traceId;
+}
+
+const traceId = getTraceFromUrlOrGen();
 /**
  * 全局变量
  */

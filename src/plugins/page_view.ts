@@ -1,5 +1,5 @@
 import { genSpanId, getClickSpanId, getPageSpanId, getParentPageSpanId, getTraceId, setPageSpanId } from "../config/global";
-import { getCommonMessage } from "../config/message";
+import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
 
 // 兼容判断

@@ -1,4 +1,4 @@
-import { getCommonMessage } from "./config/message";
+import { getCommonMessage } from "./models/message";
 import PageViewPerf from "./plugins/page_view";
 
 /**

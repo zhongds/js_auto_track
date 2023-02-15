@@ -95,4 +95,44 @@ export function randomString() {
   return r.join("")
 }
 
+/**
+ * 给url加上search参数
+ * @param url 
+ * @param k search的字段
+ * @param v search字段的值 
+ * @returns 
+ */
+export function addSearch2Url(url: string, k: string, v: string): string {
+  if (url.indexOf('?') > -1) {
+    const arr = url.split('#');
+    arr[0] = arr[0].slice(-1) === '&' ? `${arr[0]}${k}=${v}` : `&${k}=${v}`;
+    url = arr.join('#');
+  } else {
+    url += `?${k}=${v}`;
+  }
+  return url;
+}
 
+
+/**
+ * 从url中获取search值
+ * @param url 
+ * @param k search的字段
+ * @returns 
+ */
+ export function getSearchKV(url: string, k: string): string {
+  let result = '';
+  if (url.indexOf('?') > -1) {
+    const arr = url.split('#');
+    const [, search] = arr[0].split('?');
+    const data = search.split('&');
+    for(var i in data) {
+      const value = data[i];
+      if (value.indexOf(`${k}=`) !== -1) {
+          result=value.replace(`${k}=`, '');
+          break;
+      }
+    }
+  }
+  return result;
+}

@@ -1,4 +1,4 @@
-import { MemoryCache } from './config/cache';
+import { MemoryCache } from './models/cache';
 import { Config, IConfig, setConfig } from './config/config';
 import { setGlobalCache } from './config/global';
 import { handleClick, handleResource } from './handler';
@@ -6,6 +6,7 @@ import { hookHistorySate, hookPopstate, setPage } from './hook';
 import ApiPerf from './plugins/Api_perf';
 import WrapError from './plugins/error';
 import { on, rewriteEventStopPropagation } from './utils/tool';
+import { RouteIntercept } from './models/trace';
 
 export default class AutoTrackObj {
   constructor(option: IConfig) {
@@ -15,13 +16,15 @@ export default class AutoTrackObj {
   init(option: IConfig) {
     setConfig(option);
     setGlobalCache(new MemoryCache());
+    // 全局配置：拦截url
+    new RouteIntercept();
 
     Config.enableClick && this.addListenClick(); // done
     Config.enablePV && this.addListenPV(); // done
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
-    Config.enableApi && this.addListenApi(); 
-    Config.enableSPA && this.addListenStateChange();
+    Config.enableApi && this.addListenApi();  // done
+    Config.enableSPA && this.addListenStateChange(); // done
 
     console.log("配置====", Config);
     this.addListenClose();

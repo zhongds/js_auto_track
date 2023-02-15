@@ -7,7 +7,8 @@
 
 import { Config } from "../config/config";
 import { genSpanId, getPageSpanId, getTraceId, setClickSpanId } from "../config/global";
-import { getCommonMessage } from "../config/message";
+import { getCommonMessage } from "../models/message";
+import { hookAElClick } from "../models/trace";
 import { getElmSelector } from "../utils/tool";
 
 const DEF_COLLECT_ELM_TYPE = ['button', 'a', 'input', 'textarea'];
@@ -21,6 +22,9 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
   const target: Element|null = getTargetElement(e.target);
   if (!target) {
     return null;
+  }
+  if (target.nodeName.toLowerCase() === 'a') {
+    hookAElClick(e, target);
   }
   const spanId = genSpanId();
   const comMsg = getCommonMessage();
