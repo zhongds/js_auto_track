@@ -26,15 +26,11 @@ export default class PageViewPerf {
    */
   private handlePV() {
     const comMsg = getCommonMessage();
-    const spanId = genSpanId();
     const data = {
       ...comMsg,
       $event_id: '$page_view',
-      $trace_id: getTraceId(),
-      $span_id: spanId,
-      $parent_span_id: getParentPageSpanId(),
     } as IPageViewMessage;
-    setPageSpanId(spanId);
+    setPageSpanId(comMsg.$span_id);
 
     let timer = setInterval(() => {
       if (window.performance.timing.loadEventEnd) {

@@ -6,7 +6,7 @@
  */
 
 import { Config } from "../config/config";
-import { genSpanId, getPageSpanId, getTraceId, setClickSpanId } from "../config/global";
+import { setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../models/trace";
 import { getElmSelector } from "../utils/tool";
@@ -23,17 +23,13 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
   if (!target) {
     return null;
   }
-  const spanId = genSpanId();
-  if (target.nodeName.toLowerCase() === 'a') {
-    hookAElClick(e, target, spanId);
-  }
   const comMsg = getCommonMessage();
+  if (target.nodeName.toLowerCase() === 'a') {
+    hookAElClick(e, target, comMsg.$span_id);
+  }
   const data: IClickEventMessage = {
     ...comMsg,
     $event_id: '$element_click',
-    $trace_id: getTraceId(),
-    $span_id: spanId,
-    $parent_span_id: getPageSpanId(),
     $element_type: target.nodeName.toLowerCase(),
     $element_id: target.id,
     $element_name: target.getAttribute('name'),
@@ -41,7 +37,7 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
     $element_content: target.innerHTML,
     $click_type: 'single_click',
   }
-  setClickSpanId(spanId);
+  setClickSpanId(comMsg.$span_id);
   return data;
 }
 

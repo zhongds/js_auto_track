@@ -7,6 +7,7 @@ import ApiPerf from './plugins/Api_perf';
 import WrapError from './plugins/error';
 import { on, rewriteEventStopPropagation } from './utils/tool';
 import { RouteIntercept } from './models/trace';
+import { setDeviceIdFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
 
 export default class AutoTrackObj {
   constructor(option: IConfig) {
@@ -29,6 +30,19 @@ export default class AutoTrackObj {
     console.log("配置====", Config);
     this.addListenClose();
   }
+
+  setUserId(fn: Function) {
+    setLoginUserIdFn(fn);
+  }
+
+  setUserSessionId(fn: Function) {
+    setUserSessionIdFn(fn);
+  }
+
+  setDeviceId(fn: Function) {
+    setDeviceIdFn(fn);
+  }
+
 
   private addListenClick() {
     on('click', handleClick);

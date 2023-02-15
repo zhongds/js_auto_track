@@ -1,3 +1,4 @@
+import { genSpanId, getPageSpanId, getTraceId } from "../config/global";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
 
@@ -13,11 +14,12 @@ function getAnonymousId() {
 }
 
 const osInfo = getOsInfo();
-let CommonMessage: ICommonMessage = {
+let CommonMessage = {
   $event_id: '',
   $time: Date.now(),
   $anonymous_id: getAnonymousId(),
   $session_id: randomString(),
+  $user_session_id: '',
   $sdk_type: 'js',
   $sdk_version: '{{VERSION}}', // 构建时替换
   $os: osInfo.name, 
@@ -38,32 +40,58 @@ let CommonMessage: ICommonMessage = {
   $referrer: document.referrer,
   $title: document.title,
   $charset: document.charset || document.characterSet,
+} as ICommonMessage;
+
+/**
+ * 保存延迟获取的方法
+ */
+const Runnable = {
+  loginUserIdFn: null,
+  deviceIdFn: null,
+  userSessionIdFn: null,
+} as any;
+export function setLoginUserIdFn(fn: Function) {
+  if (fn && typeof fn === 'function') {
+    Runnable.loginUserIdFn = fn;
+  }
 }
 
-export function setAppId(appId: string) {
-  CommonMessage.$app_id = appId;
+export function setDeviceIdFn(fn: Function) {
+  if (fn && typeof fn === 'function') {
+    Runnable.deviceIdFn = fn;
+  }
 }
 
-export function setChannelId(channelId: string) {
-  CommonMessage.$channel_id = channelId;
+export function setUserSessionIdFn(fn: Function) {
+  if (fn && typeof fn === 'function') {
+    Runnable.userSessionIdFn = fn;
+  }
 }
 
-export function setLoginUserId(uid: string) {
-  CommonMessage.$user_id = uid;
+function run(fn: Function): string {
+  try {
+    if (fn && typeof fn === 'function') {
+      const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
+      const result = fn.apply(null, args);
+      return typeof result === 'string' ? result : '';
+    }
+  } catch (error) {
+    console.error('error:::', error);
+  }
+  return '';
 }
 
-export function setDeviceId(deviceId: string) {
-  CommonMessage.$device_id = deviceId;
-}
-
-export function setGuid(guid: string) {
-  CommonMessage.$guid = guid;
-}
 
 export function getCommonMessage(): ICommonMessage {
   CommonMessage = {
     ...CommonMessage,
     $time: Date.now(),
+    $trace_id: getTraceId(),
+    $span_id: genSpanId(),
+    $parent_span_id: getPageSpanId(),
+    $user_id: run(Runnable.loginUserIdFn),
+    $user_session_id: run(Runnable.userSessionIdFn),
+    $device_id: run(Runnable.deviceIdFn)
   }
   return CommonMessage;
 }

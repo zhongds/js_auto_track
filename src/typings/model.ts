@@ -13,6 +13,7 @@ interface ICommonMessage {
   $page_id: string, // 没啥用
   $user_id?: string, // 登录用户id，手动设置
   $session_id?: string, // 每次加载生成的随机数
+  $user_session_id?: string, // 用户的sessionid
   $device_id?: string,
   $guid?: string,
   $app_version?: string, // ?
@@ -35,13 +36,13 @@ interface ICommonMessage {
   $referrer: string, // 上个页面地址
   $title: string, // 页面标题
   $charset: string, // 页面编码
+  $trace_id: string, // 
+  $span_id: string, // 
+  $parent_span_id: string, //
 }
 
 
 interface IClickEventMessage extends ICommonMessage {
-  $trace_id: string, 
-  $span_id: string, // 
-  $parent_span_id: string, //
   $element_type: string, // 元素类型，如button，a等
   $element_id?: string, // 元素id
   $element_name?: string, // name属性
@@ -52,9 +53,6 @@ interface IClickEventMessage extends ICommonMessage {
 }
 
 interface IPageViewMessage extends ICommonMessage {
-  $trace_id: string, 
-  $span_id: string, // 
-  $parent_span_id: string, //
   $performance: IPagePerformance,
   $duration: number, // 总耗时
 }
