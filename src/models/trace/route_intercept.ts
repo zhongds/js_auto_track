@@ -1,4 +1,4 @@
-import { URL_TRACE_ID_KEY } from "../../config/constant";
+import { URL_SPAN_ID_KEY, URL_TRACE_ID_KEY } from "../../config/constant";
 import { getTraceId } from "../../config/global";
 import { addSearch2Url } from "../../utils/tool";
 
@@ -12,7 +12,7 @@ const _href = window[SDK_HREF_KEY] = window.location.href;
  * @param target 
  * @returns 
  */
-export function hookAElClick(e: Event, target: Element) {
+export function hookAElClick(e: Event, target: Element, spanId: string) {
   if (!(target instanceof Element) || target.nodeName.toLowerCase() !== 'a') {
     return null
   }
@@ -23,6 +23,7 @@ export function hookAElClick(e: Event, target: Element) {
   const traceId = getTraceId();
   if (traceId) {
     url = addSearch2Url(url, URL_TRACE_ID_KEY, traceId);
+    url = addSearch2Url(url, URL_SPAN_ID_KEY, spanId);
   }
   _open(url, tag || '_self');
 }

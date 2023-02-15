@@ -105,7 +105,7 @@ export function randomString() {
 export function addSearch2Url(url: string, k: string, v: string): string {
   if (url.indexOf('?') > -1) {
     const arr = url.split('#');
-    arr[0] = arr[0].slice(-1) === '&' ? `${arr[0]}${k}=${v}` : `&${k}=${v}`;
+    arr[0] = arr[0].slice(-1) === '&' ? `${arr[0]}${k}=${v}` : `${arr[0]}&${k}=${v}`;
     url = arr.join('#');
   } else {
     url += `?${k}=${v}`;

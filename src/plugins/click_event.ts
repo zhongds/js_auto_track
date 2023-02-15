@@ -23,10 +23,10 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
   if (!target) {
     return null;
   }
-  if (target.nodeName.toLowerCase() === 'a') {
-    hookAElClick(e, target);
-  }
   const spanId = genSpanId();
+  if (target.nodeName.toLowerCase() === 'a') {
+    hookAElClick(e, target, spanId);
+  }
   const comMsg = getCommonMessage();
   const data: IClickEventMessage = {
     ...comMsg,
