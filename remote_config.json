@@ -1,0 +1,22 @@
+{
+  "enable": true,
+  "collect_event_type": {
+    "click": true,
+    "pv": true,
+    "error": true,
+    "api": true
+  },
+  "collect_click_elm": {
+    "button": true,
+    "a": true,
+    "input": true,
+    "textarea": true,
+    "div": true,
+    "i": true,
+    "img": true,
+    "em": true
+  },
+  "ignore_page": {
+    "https://xxx.yy/aa/d": true
+  }
+}

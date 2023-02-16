@@ -27,6 +27,7 @@ export interface IConfig {
     div?: boolean, // 只抓叶子节点
     [key: string]: boolean,
   },
+  remoteUrl?: string, // 远端配置地址
 }
 
 

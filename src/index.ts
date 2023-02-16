@@ -17,7 +17,7 @@ export default class AutoTrackObj {
   init(option: IConfig) {
     setConfig(option);
     setGlobalCache(new MemoryCache());
-    // 全局配置：拦截url
+    
     new RouteIntercept();
 
     Config.enableClick && this.addListenClick(); // done

@@ -20,6 +20,7 @@ import { URL_SPAN_ID_KEY, URL_TRACE_ID_KEY } from './constant';
     timestamp: 0,
   },
   cache: {} as MemoryCache,
+  
 }
 
 // 1. 先从从url 获取trace_id和spanId 2. 获取不到再生成
