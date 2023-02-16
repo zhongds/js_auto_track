@@ -20,7 +20,7 @@ export default class ApiPerf {
     const comMsg = getCommonMessage();
     const data: IApiPerfMessage = {
       ...comMsg,
-      $event_id: '$api',
+      $event_type: '$api',
       ...apiData,
     }
     report(data);

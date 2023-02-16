@@ -15,7 +15,7 @@ function getAnonymousId() {
 
 const osInfo = getOsInfo();
 let CommonMessage = {
-  $event_id: '',
+  $event_type: '',
   $time: Date.now(),
   $anonymous_id: getAnonymousId(),
   $session_id: randomString(),

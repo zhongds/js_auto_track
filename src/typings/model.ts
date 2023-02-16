@@ -4,7 +4,7 @@ type ClickType = 'single_click' | 'double_click';
 type APMType = '$error' | '$resource_performance' | '$api';
 
 interface ICommonMessage {
-  $event_id: EventType | APMType,
+  $event_type: EventType | APMType,
   $anonymous_id: string, // 加载时生成随机数，保存在localStorage，下次直接拿
   $time: number, // 当前时间戳
   $app_id?: string, // 初始化设置

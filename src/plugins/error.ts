@@ -42,7 +42,7 @@ export default class WrapError {
     const stackStr = e.error.stack || '';
     const data: IErrorMessage = {
       ...commonMsg,
-      $event_id: '$error',
+      $event_type: '$error',
       $category_id: 'jsError',
       $err_msg: msg && msg.substring(0, 1e3), // 信息
       $err_detail: stackStr && stackStr.substring(0, 1e3), // 错误栈
@@ -60,7 +60,7 @@ export default class WrapError {
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
-        $event_id: '$error',
+        $event_type: '$error',
         $category_id: 'resource_error',
         $err_msg: target.outerHTML,
         $err_file: target.src,
@@ -76,7 +76,7 @@ export default class WrapError {
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
-        $event_id: '$error',
+        $event_type: '$error',
         $category_id: 'promise_error',
         $err_msg: e.reason,
       }

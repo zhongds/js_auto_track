@@ -24,7 +24,7 @@ export default class AutoTrackObj {
     Config.enablePV && this.addListenPV(); // done
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
-    Config.enableApi && this.addListenApi();  // done
+    // Config.enableApi && this.addListenApi();  // done TODO
     Config.enableSPA && this.addListenStateChange(); // done
 
     console.log("配置====", Config);

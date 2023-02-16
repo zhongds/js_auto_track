@@ -28,7 +28,7 @@ export default class PageViewPerf {
     const comMsg = getCommonMessage();
     const data = {
       ...comMsg,
-      $event_id: '$page_view',
+      $event_type: '$page_view',
     } as IPageViewMessage;
     setPageSpanId(comMsg.$span_id);
 

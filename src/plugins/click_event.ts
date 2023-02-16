@@ -29,7 +29,7 @@ export function getClickEventMessage(e: Event): IClickEventMessage|null {
   }
   const data: IClickEventMessage = {
     ...comMsg,
-    $event_id: '$element_click',
+    $event_type: '$element_click',
     $element_type: target.nodeName.toLowerCase(),
     $element_id: target.id,
     $element_name: target.getAttribute('name'),
