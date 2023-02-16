@@ -41,7 +41,7 @@ const defaultConfig: IConfig = {
   enableSPA: false,
   enableRes: false,
   enableDbClick: false,
-  enableApi: false,
+  enableApi: true,
 
   collectClickElmType: {
     ...DEFAULT_CLICK_EL_TYPE,

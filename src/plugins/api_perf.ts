@@ -82,11 +82,12 @@ export default class ApiPerf {
       const _send = xhr.send;
       xhr.open = function (method, url) {
         _apiData.$api_url = typeof url === 'string' ? url : (url as URL).href;
-        return _open.call(this, method, url);
+        const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
+        return _open.apply(xhr, args);
       }
       xhr.send = function (body) {
         _apiData.$api_begin = Date.now();
-        _send.call(this, body);
+        _send.call(xhr, body);
       }
       xhr.onreadystatechange = function() {
         if (xhr.readyState === XMLHttpRequest.DONE) {
