@@ -43,7 +43,6 @@ export default class AutoTrackObj {
     setDeviceIdFn(fn);
   }
 
-
   private addListenClick() {
     on('click', handleClick);
     // TODO 专门管理，重写Event事件
