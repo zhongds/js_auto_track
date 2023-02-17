@@ -11,8 +11,23 @@ import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
 
 export default class AutoTrackObj {
+  static setUserId(fn: Function) {
+    setLoginUserIdFn(fn);
+  }
+
+  static setUserSessionId(fn: Function) {
+    setUserSessionIdFn(fn);
+  }
+
+  static setDeviceId(fn: Function) {
+    setDeviceIdFn(fn);
+  }
+
   constructor(option: IConfig) {
-    this.init(option);
+    // TODO 后面去掉，暂时只是为了兼容个人中心页面bug
+    setTimeout(() => {
+      this.init(option);  
+    }, 50);
   }
 
   init(option: IConfig) {
@@ -28,18 +43,6 @@ export default class AutoTrackObj {
     // Config.enableApi && this.addListenApi();  // done TODO
 
     console.log("配置====", Config);
-  }
-
-  static setUserId(fn: Function) {
-    setLoginUserIdFn(fn);
-  }
-
-  static setUserSessionId(fn: Function) {
-    setUserSessionIdFn(fn);
-  }
-
-  static setDeviceId(fn: Function) {
-    setDeviceIdFn(fn);
   }
 
   private addListenClick() {

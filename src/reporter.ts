@@ -8,6 +8,7 @@ export function report(data: ICommonMessage) {
   if (!data) {
     return;
   }
+  // 避免错误重复上报
   if (cacheIntercept(data)) {
     console.log('cache, not report ');
     return;
@@ -26,14 +27,14 @@ export function report(data: ICommonMessage) {
 }
 
 /**
- * 缓存管理
+ * 缓存管理，降低重复数据上报的频率
  */
+const impactKeys = ['$time']; //影响因子
 function cacheIntercept(data: ICommonMessage) {
   const cloneData = {...data};
   const cache = getGlobalCache();
   if (cache) {
-    const time = cloneData.$time;
-    delete cloneData.$time;
+    impactKeys.forEach((k => delete cloneData[k]));
     const key = JSON.stringify(cloneData);
     if (cache.get(key)) {
       console.log('命中缓存，不上报');
