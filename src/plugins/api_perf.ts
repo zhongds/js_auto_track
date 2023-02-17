@@ -7,16 +7,35 @@ const RESPONSE_MAX_LENGTH = 1000;
  * http拦截
  */
 export default class ApiPerf {
-  constructor() {
-    this.init();
+  // 只初始化一次
+  private static isInit: boolean = false;
+  // 自动采集数据
+  private static isAutoTrack: boolean = true;
+  static autoTrack() {
+    if (ApiPerf.isInit) return;
+    ApiPerf.isInit = true;
+    const ins = new ApiPerf();
+    ins.init();
   }
 
-  init() {
+  /**
+   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   */
+  static stopTrack() {
+    ApiPerf.isAutoTrack = false;
+  }
+
+  static resumeTrack() {
+    ApiPerf.isAutoTrack = true;
+  }
+
+  private init() {
     this.hookFetch();
     this.hookAjax();
   }
 
   handleApiPerf(apiData: IApiPerfData) {
+    if (!ApiPerf.isAutoTrack) return;
     const comMsg = getCommonMessage();
     const data: IApiPerfMessage = {
       ...comMsg,

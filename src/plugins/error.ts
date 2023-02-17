@@ -3,9 +3,26 @@ import { report } from "../reporter";
 import { off, on } from "../utils/tool";
 
 export default class WrapError {
+  // 只初始化一次
+  private static isInit: boolean = false;
+  // 自动采集数据
+  private static isAutoTrack: boolean = true;
+  static autoTrack() {
+    if (WrapError.isInit) return;
+    WrapError.isInit = true;
+    const ins = new WrapError();
+    ins.init();
+  }
 
-  constructor() {
-    this.init();
+  /**
+   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   */
+  static stopTrack() {
+    WrapError.isAutoTrack = false;
+  }
+
+  static resumeTrack() {
+    WrapError.isAutoTrack = true;
   }
 
   /**
@@ -19,6 +36,7 @@ export default class WrapError {
   }
 
   handleError(event: Event) {
+    if (!WrapError.isAutoTrack) return;
     let result;
     switch (event.type) {
       case 'error': {
@@ -82,10 +100,5 @@ export default class WrapError {
       }
     }
     return data;
-  }
-
-  destroy() {
-    off('error', this.handleError.bind(this));
-    off('unhandledrejection', this.handleError.bind(this));
   }
 }

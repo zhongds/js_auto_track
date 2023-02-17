@@ -1,13 +1,3 @@
-import { getClickEventMessage } from "./plugins/click_event";
-import { report } from "./reporter";
-
-/**
- * 捕获点击事件
- */
-export function handleClick(e: Event) {
-  const data = getClickEventMessage(e);
-  report(data);
-}
 
 /**
  * 捕获双击事件

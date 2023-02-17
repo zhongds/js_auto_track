@@ -9,30 +9,51 @@ import { Config } from "../config/config";
 import { setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../models/trace";
+import { report } from "../reporter";
 import { getElmSelector, on } from "../utils/tool";
 
 const DEF_COLLECT_ELM_TYPE = ['button', 'a', 'input', 'textarea'];
 
 export default class ClickEvent {
-  constructor() {
-    this.init();
+  // 只初始化一次
+  private static isInit: boolean = false;
+  // 自动采集数据
+  private static isAutoTrack: boolean = true;
+  static autoTrack() {
+    if (ClickEvent.isInit) return;
+    ClickEvent.isInit = true;
+    const ins = new ClickEvent();
+    ins.init();
   }
 
-  init() {
+  /**
+   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   */
+  static stopTrack() {
+    ClickEvent.isAutoTrack = false;
+  }
+
+  static resumeTrack() {
+    ClickEvent.isAutoTrack = true;
+  }
+
+  private init() {
     on('click', this.handleClick.bind(this));
     this.hookEventStopPropagation(this.handleClick.bind(this));
   }
 
-  handleClick(e: Event) {
-    const data = getClickEventMessage(e);
-    report(data);
+  private handleClick(e: Event) {
+    if (ClickEvent.isAutoTrack) {
+      const data = this.getClickEventMessage(e);
+      report(data);
+    }
   }
 
   /**
    * 重写event.stopPropagation，触发全局的埋点事件
    * @param fn 拦截方法
    */
-  hookEventStopPropagation(fn: EventListener): void {
+  private hookEventStopPropagation(fn: EventListener): void {
     const originFn = Event.prototype.stopPropagation;
     Event.prototype.stopPropagation = function() {
       fn(this);
@@ -40,8 +61,8 @@ export default class ClickEvent {
     }
   }
 
-  getClickEventMessage(e: Event): IClickEventMessage|null {
-    const target: Element|null = getTargetElement(e.target);
+  private getClickEventMessage(e: Event): IClickEventMessage|null {
+    const target: Element|null = this.getTargetElement(e.target);
     if (!target) {
       return null;
     }
@@ -63,7 +84,7 @@ export default class ClickEvent {
     return data;
   }
 
-  getTargetElement(e: EventTarget): Element|null {
+  private getTargetElement(e: EventTarget): Element|null {
     if (!(e instanceof Element)) {
       return null
     }
@@ -80,7 +101,4 @@ export default class ClickEvent {
     } while(result && DEF_COLLECT_ELM_TYPE.indexOf(result.nodeName.toLowerCase()) === -1)
     return result;
   }
-
-  
-
 }

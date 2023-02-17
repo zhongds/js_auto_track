@@ -19,18 +19,6 @@ export function off(eventName: string, fn: EventListener): void {
 }
 
 /**
- * 重写event.stopPropagation，触发全局的埋点事件
- * @param fn 拦截方法
- */
-export function rewriteEventStopPropagation(fn: EventListener): void {
-  const originFn = Event.prototype.stopPropagation;
-  Event.prototype.stopPropagation = function() {
-    fn(this);
-    originFn.call(this);
-  }
-}
-
-/**
  * 获取当前元素的selector
  * @param target event.target | Element
  * @param lastPath 上一个元素的selector路径

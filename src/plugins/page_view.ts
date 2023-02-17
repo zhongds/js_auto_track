@@ -1,6 +1,7 @@
 import { genSpanId, getClickSpanId, getPageSpanId, getParentPageSpanId, getTraceId, setPageSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
+import { on } from "../utils/tool";
 
 // 兼容判断
 const supported = {
@@ -11,17 +12,48 @@ const supported = {
   PerformanceNavigationTiming: 'PerformanceNavigationTiming' in window,
 };
 export default class PageViewPerf {
-  static reportPV() {
+  // 只初始化一次
+  private static isInit: boolean = false;
+  // 自动采集数据
+  private static isAutoTrack: boolean = true;
+  private static enableSPA: boolean = false;
+  static autoTrack(enableSPA?: boolean) {
+    if (PageViewPerf.isInit) return;
+    PageViewPerf.isInit = true;
+    PageViewPerf.enableSPA = enableSPA || false;
     const ins = new PageViewPerf();
     ins.init();
   }
 
+  /**
+   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   */
+  static stopTrack() {
+    PageViewPerf.isAutoTrack = false;
+  }
+
+  static resumeTrack() {
+    PageViewPerf.isAutoTrack = true;
+  }
+
   private init() {
-    this.handlePV();
+    'complete' === window.document.readyState ? this.setPage() : on('load', this.setPage.bind(this));
+    this.hookPopstate();
+    if (PageViewPerf.enableSPA) {
+      this.hookHistorySate('pushState');
+      this.hookHistorySate('replaceState');
+    }
   }
 
   /**
-   * 性能数据
+   * 页面变化，上报PV
+   */
+  private setPage() {
+    PageViewPerf.isAutoTrack && this.handlePV();
+  }
+
+  /**
+   * 上报pv + 性能数据
    * @returns 
    */
   private handlePV() {
@@ -41,6 +73,38 @@ export default class PageViewPerf {
         report(data);
       }
     }, 50)
+  }
+
+  /**
+   * 重写history方法
+   * hash变化，路径变化, 不会触发popstate事件 => 重写这两个方法
+   * @param key 'pushState'|'replaceState'
+   */
+  private hookHistorySate(key: 'pushState'|'replaceState'): void {
+    if (window[`@@track_${key}`]) return;
+    window[`@@track_${key}`] = history[key];
+    const _this = this;
+    history[key] = function (){
+      const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
+      window[`@@track_${key}`].apply(history, args);
+      _this.setPage();
+    }
+  }
+
+  /**
+   * 监听路由变化
+   * 1. hash变化: 监听popstate
+   * 2. 浏览器前进后退：监听popstate
+   */
+  private hookPopstate(): void {
+    if (window['@@track_popstate']) return;
+    window['@@track_popstate'] = window.onpopstate;
+    const _this = this;
+    window.onpopstate = function () {
+      const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
+      window['@@track_popstate'].apply(window, args);
+      _this.setPage();
+    }
   }
 
   private genPerfMessage(): IPagePerformance {
