@@ -1,10 +1,11 @@
 {
   "enable": true,
   "collect_event_type": {
-    "click": true,
-    "pv": true,
-    "error": true,
-    "api": true
+    "enableClick": true,
+    "enablePV": true,
+    "enableError": true,
+    "enableApi": true,
+    "enableRes": true
   },
   "collect_click_elm": {
     "button": true,

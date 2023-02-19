@@ -9,6 +9,7 @@ import { RouteIntercept } from './models/trace';
 import { setDeviceIdFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
 import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
+import RemoteConfig from './models/remote_config';
 
 export default class AutoTrackObj {
   static setUserId(fn: Function) {
@@ -24,25 +25,30 @@ export default class AutoTrackObj {
   }
 
   constructor(option: IConfig) {
-    // TODO 后面去掉，暂时只是为了兼容个人中心页面bug
-    setTimeout(() => {
-      this.init(option);  
-    }, 50);
+    if (option.remoteUrl) {
+      RemoteConfig.fetchConfig(option.remoteUrl, () => {
+        this.init(option);
+      })
+    } else {
+      // TODO setTimeout后面去掉，暂时只是为了兼容个人中心页面bug
+      setTimeout(() => {
+        this.init(option);
+      }, 50);
+    }
   }
 
   init(option: IConfig) {
     setConfig(option);
-    setGlobalCache(new MemoryCache());
-    
-    new RouteIntercept();
+    console.log("配置====", Config);
+    if (!Config.enable) return;
 
+    setGlobalCache(new MemoryCache());
+    new RouteIntercept();
     Config.enableClick && this.addListenClick(); // done
     Config.enablePV && this.addListenPV(Config.enableSPA); // done
     Config.enableRes && this.sendResource();
     Config.enableError && this.addListenError(); // done
-    // Config.enableApi && this.addListenApi();  // done TODO
-
-    console.log("配置====", Config);
+    Config.enableApi && this.addListenApi();  // done
   }
 
   private addListenClick() {

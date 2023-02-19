@@ -5,14 +5,12 @@
  * 3. div元素, 只抓取叶子节点
  */
 
-import { Config } from "../config/config";
+import { COLLECT_CUR_OR_UP_ELM_TYPE, Config } from "../config/config";
 import { setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../models/trace";
 import { report } from "../reporter";
 import { getElmSelector, on } from "../utils/tool";
-
-const DEF_COLLECT_ELM_TYPE = ['button', 'a', 'input', 'textarea'];
 
 export default class ClickEvent {
   // 只初始化一次
@@ -89,16 +87,22 @@ export default class ClickEvent {
       return null
     }
     let nodeName = e.nodeName.toLowerCase();
-    if (DEF_COLLECT_ELM_TYPE.indexOf(nodeName) !== -1 || (Config.collectClickElmType[nodeName] && nodeName !== 'div')) {
+    if (Config.collectClickElmType[nodeName] && nodeName !== 'div') {
       return e;
     }
     if (nodeName === 'div' && Config.collectClickElmType['div'] && e.children.length === 0) {
       return e;
     }
+    const keys = Object.keys(COLLECT_CUR_OR_UP_ELM_TYPE).reduce((res, cur) => {
+      if (COLLECT_CUR_OR_UP_ELM_TYPE[cur]) {
+        res.push(cur);
+      }
+      return res;
+    }, []);
     let result = e;
     do {
       result = result.parentElement;
-    } while(result && DEF_COLLECT_ELM_TYPE.indexOf(result.nodeName.toLowerCase()) === -1)
+    } while(result && keys.indexOf(result.nodeName.toLowerCase()) === -1)
     return result;
   }
 }
