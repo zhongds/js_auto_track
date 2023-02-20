@@ -2,9 +2,9 @@
   "enable": true,
   "collect_event_type": {
     "enableClick": true,
-    "enablePV": false,
+    "enablePV": true,
     "enableError": true,
-    "enableApi": false,
+    "enableApi": true,
     "enableRes": true
   },
   "collect_click_elm": {

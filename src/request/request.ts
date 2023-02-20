@@ -26,7 +26,7 @@ export function post(url: string, body: string, cb: CallbackObj) {
   xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
 
   xhr.onreadystatechange = () => { // Call a function when the state changes.
-    if (xhr.readyState === XMLHttpRequest.DONE) {
+    if (xhr.readyState === 4) {
       if (xhr.status >= 200 && xhr.status < 300) {
         cb.onSuccess(xhr.responseText);
       } else {

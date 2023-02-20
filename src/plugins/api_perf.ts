@@ -109,7 +109,7 @@ export default class ApiPerf {
         _send.call(xhr, body);
       }
       xhr.onreadystatechange = function() {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.readyState === 4) {
           const cost = Date.now() - _apiData.$api_begin;
           _apiData.$api_duration = cost;
           _apiData.$api_status = xhr.status;
