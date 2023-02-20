@@ -25,20 +25,20 @@ export default class AutoTrackObj {
   }
 
   constructor(option: IConfig) {
+    setConfig(option);
     if (option.remoteUrl) {
       RemoteConfig.fetchConfig(option.remoteUrl, () => {
-        this.init(option);
+        this.init();
       })
     } else {
       // TODO setTimeout后面去掉，暂时只是为了兼容个人中心页面bug
       setTimeout(() => {
-        this.init(option);
+        this.init();
       }, 50);
     }
   }
 
-  init(option: IConfig) {
-    setConfig(option);
+  init() {
     console.log("配置====", Config);
     if (!Config.enable) return;
 
