@@ -1,6 +1,7 @@
+import { Config } from "../../config/config";
 import { URL_SPAN_ID_KEY, URL_TRACE_ID_KEY } from "../../config/constant";
 import { getTraceId } from "../../config/global";
-import { addSearch2Url } from "../../utils/tool";
+import { addSearch2Url, checkIsSameDomain } from "../../utils/tool";
 
 const SDK_OPEN_KEY = '@@SDK_OPEN_KEY';
 const SDK_HREF_KEY = '@@SDK_HREF_KEY';
@@ -16,20 +17,28 @@ export function hookAElClick(e: Event, target: Element, spanId: string) {
   if (!(target instanceof Element) || target.nodeName.toLowerCase() !== 'a') {
     return null
   }
-  e.preventDefault();
   let url = target.getAttribute('href');
+  const reg = /^(ftp:\/\/|mailto:|file:|javascript:).*/;
+  if (reg.test(url)) {
+    return;
+  }
   const tag = target.getAttribute('target');
 
   const traceId = getTraceId();
+  let newUrl = url;
   if (traceId) {
-    url = addSearch2Url(url, URL_TRACE_ID_KEY, traceId);
-    url = addSearch2Url(url, URL_SPAN_ID_KEY, spanId);
+    newUrl = checkAndAddSearch2Url(url, URL_TRACE_ID_KEY, traceId);
+    newUrl = checkAndAddSearch2Url(newUrl, URL_SPAN_ID_KEY, spanId);
   }
-  _open(url, tag || '_self');
+  if (newUrl !== url) { // 地址没变就走原来的逻辑
+    e.preventDefault();
+    _open(newUrl, tag || '_self');
+  }
 }
 
 /**
  * 全局路由拦截，重写href和window.open方法
+ * 添加traceId和spanId
  */
 export class RouteIntercept {
   static isInit: boolean = false;
@@ -50,12 +59,26 @@ export class RouteIntercept {
       const traceId = getTraceId();
       if (traceId) {
         if (typeof url === 'string') {
-          url = addSearch2Url(url, URL_TRACE_ID_KEY, traceId);
+          url = checkAndAddSearch2Url(url, URL_TRACE_ID_KEY, traceId);
         } else if (url instanceof URL) {
-          url.href = addSearch2Url(url.href, URL_TRACE_ID_KEY, traceId);
+          url.href = checkAndAddSearch2Url(url.href, URL_TRACE_ID_KEY, traceId);
         }
       }
       return _open(url, target, features);
     }
   }
+}
+
+/**
+ * 单页应用并且跳转是同域的话就不需要加traceId
+ * @param url 
+ * @param key 
+ * @param value 
+ * @returns 
+ */
+function checkAndAddSearch2Url(url: string, key: string, value: string): string {
+  if (Config.enableSPA && checkIsSameDomain(url)) {
+    return url;
+  }
+  return addSearch2Url(url, key, value);
 }

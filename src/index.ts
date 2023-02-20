@@ -43,10 +43,10 @@ export default class AutoTrackObj {
     if (!Config.enable) return;
 
     setGlobalCache(new MemoryCache());
-    new RouteIntercept();
+    new RouteIntercept(); 
     Config.enableClick && this.addListenClick(); // done
     Config.enablePV && this.addListenPV(Config.enableSPA); // done
-    Config.enableRes && this.sendResource();
+    Config.enableRes && this.sendResource(); // TODO
     Config.enableError && this.addListenError(); // done
     Config.enableApi && this.addListenApi();  // done
   }

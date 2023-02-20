@@ -124,3 +124,19 @@ export function addSearch2Url(url: string, k: string, v: string): string {
   }
   return result;
 }
+
+/**
+ * 检查url是否是当前域
+ * 1. 空值就是同域
+ * 2. 相对路径也是同域
+ * @param u1 
+ * @returns 
+ */
+export function checkIsSameDomain(u1: string): boolean {
+  if (!u1 || !/https?:\/\//.test(u1)) {
+    return true;
+  }
+  const reg = /^(https?:\/\/[\w\.-]+)\/?/g;
+  const d1 = u1.replace(reg, '$1');
+  return d1 === location.origin;
+}
