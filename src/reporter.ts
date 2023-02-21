@@ -2,6 +2,7 @@ import { Config } from "./config/config";
 import { warn } from "./utils/tool";
 import md5 from 'md5';
 import { getGlobalCache } from "./config/global";
+import { genScreenshot } from "./models/screenshot";
 
 export function report(data: ICommonMessage) {
   console.log('上报数据: ', data);
@@ -12,6 +13,10 @@ export function report(data: ICommonMessage) {
   if (cacheIntercept(data)) {
     console.log('cache, not report ');
     return;
+  }
+
+  if (data.$event_type === '$page_view' || data.$event_type === '$element_click') {
+    genScreenshot(data.$span_id, document.body);
   }
   
   if (false && window.navigator && "function" == typeof window.navigator.sendBeacon ) {

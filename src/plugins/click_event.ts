@@ -8,7 +8,6 @@
 import { COLLECT_CUR_OR_UP_ELM_TYPE, Config } from "../config/config";
 import { setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
-import { genScreenshot } from "../models/screenshot";
 import { hookAElClick } from "../models/trace";
 import { report } from "../reporter";
 import { getElmSelector, on } from "../utils/tool";
@@ -44,8 +43,6 @@ export default class ClickEvent {
   private handleClick(e: Event) {
     if (ClickEvent.isAutoTrack) {
       const data = this.getClickEventMessage(e);
-      // 生成图片
-      genScreenshot(document.body);
       report(data);
     }
   }

@@ -57,8 +57,8 @@ const defaultConfig: IConfig = {
   enablePV: true,
   enableClick: true,
   enableError: true,
-  enableScreenShot: true, // TODO 先设置为true
 
+  enableScreenShot: false,
   enableSPA: false,
   enableRes: false,
   enableDbClick: false,
