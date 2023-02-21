@@ -10,6 +10,8 @@ import { setDeviceIdFn, setLoginUserIdFn, setUserSessionIdFn } from './models/me
 import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
 import RemoteConfig from './models/remote_config';
+import 'es6-promise/auto';
+
 
 export default class AutoTrackObj {
   static setUserId(fn: Function) {

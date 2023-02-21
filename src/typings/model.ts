@@ -49,12 +49,14 @@ interface IClickEventMessage extends ICommonMessage {
   $element_path?: string, // 元素selector
   $element_content?: string, // innerHtml
   $element_position?: string, // 位置信息，列表
-  $click_type?: ClickType, // 单击/双击 
+  $click_type?: ClickType, // 单击/双击
+  $screenshot?: string, // 屏幕截图
 }
 
 interface IPageViewMessage extends ICommonMessage {
   $performance: IPagePerformance,
   $duration: number, // 总耗时
+  $screenshot?: string, // 屏幕截图
 }
 
 interface IPageLeaveMessage extends ICommonMessage {

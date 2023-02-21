@@ -1,5 +1,6 @@
 import { genSpanId, getClickSpanId, getPageSpanId, getParentPageSpanId, getTraceId, setPageSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
+import { genScreenshot } from "../models/screenshot";
 import { report } from "../reporter";
 import { on } from "../utils/tool";
 
@@ -70,6 +71,8 @@ export default class PageViewPerf {
         const perf = this.genPerfMessage();
         data.$performance = perf;
         data.$duration = perf.$duration;
+        // 生成图片
+        genScreenshot(document.body);
         report(data);
       }
     }, 50)

@@ -44,6 +44,7 @@ export interface IConfig {
     [key: string]: boolean,
   }
   remoteUrl?: string, // 远端配置地址
+  enableScreenShot?: boolean, // 是否截图，只支持PV和点击事件截图
 }
 
 
@@ -56,6 +57,7 @@ const defaultConfig: IConfig = {
   enablePV: true,
   enableClick: true,
   enableError: true,
+  enableScreenShot: true, // TODO 先设置为true
 
   enableSPA: false,
   enableRes: false,
