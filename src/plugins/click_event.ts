@@ -77,6 +77,8 @@ export default class ClickEvent {
       $element_path: getElmSelector(target),
       $element_content: target.innerHTML,
       $click_type: 'single_click',
+      $element_page_x: (e as PointerEvent).pageX,
+      $element_page_y: (e as PointerEvent).pageY,
     }
     setClickSpanId(comMsg.$span_id);
     return data;
