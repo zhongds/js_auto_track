@@ -20,7 +20,7 @@ export function genScreenshot(name: string, node: Element) {
           const xhr = new XMLHttpRequest();
           xhr.open('POST', `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`);
           xhr.setRequestHeader('Content-Type', 'image/png')
-          xhr.setRequestHeader('Authorization', 'Bearer ');
+          xhr.setRequestHeader('Authorization', 'Bearer ' + cred.access_token);
           xhr.send(blob);
         })
         .catch(function (error) {
