@@ -9,14 +9,26 @@ import { Config } from '../config/config';
  */
 export function genScreenshot(name: string, node: Element) {
   if (!node || !(node instanceof Element)) return;
-  if (Config.enableScreenShot) {
-    domToImage.toPng(node)
-      .then(function (dataUrl) {
-        console.log('图片', dataUrl);
-        // TODO upload上传
-      })
-      .catch(function (error) {
-        console.error('oops, something went wrong!', error);
-      });
+  const key = 'credentials_XVJVzaJv8vKHzVCk'; // TODO 先写死了内网可上传图片
+  try {
+    const credStr = localStorage.getItem(key);
+    const cred = JSON.parse(credStr);
+    if (Config.enableScreenShot && cred.access_token) {
+      domToImage.toBlob(node)
+        .then(function (blob) {
+          console.log('图片', blob);
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`);
+          xhr.setRequestHeader('Content-Type', 'image/png')
+          xhr.setRequestHeader('Authorization', 'Bearer ');
+          xhr.send(blob);
+        })
+        .catch(function (error) {
+          console.error('oops, something went wrong!', error);
+        });
+    }
+  } catch (error) {
+    console.error('生成上传图片报错', error);
   }
 }
+
