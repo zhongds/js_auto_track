@@ -102,3 +102,45 @@ interface IApiPerfData {
   $api_success: boolean, // 成功与否
   $api_msg?: string, // 失败把信息上报
 }
+
+interface IRemoteEventItem {
+  events: Array<'pv'|'click'|'api'|'error'|'*'>,
+  spa?: boolean,
+  capture?: false,
+  $element_type?: string[],
+  pages?: string[],
+}
+interface IRemoteConfigData {
+  enable: boolean,
+  includes?: IRemoteEventItem[],
+  excludes?: IRemoteEventItem[],
+}
+
+interface IEventCapacity {
+  enable: boolean, // 事件能力是否开启
+}
+interface IPageViewEventCapacity extends IEventCapacity {
+  spa?: boolean, // 是否是单页应用，true-重写pushState和replaceState方法
+  capture?: false, // 是否开启截屏
+  include_pages?: string[],
+  exclude_pages?: string[],
+}
+
+interface IClickEventCapacity extends IEventCapacity {
+  capture?: false,
+  element_types?: string[],
+  include_pages?: string[],
+  exclude_pages?: string[],
+}
+
+interface IResEventCapacity extends IEventCapacity {
+  include_pages?: string[],
+  exclude_pages?: string[],
+}
+
+interface IApiEventCapacity extends IEventCapacity{
+  
+}
+interface IErrorEventCapacity extends IEventCapacity {
+  
+}

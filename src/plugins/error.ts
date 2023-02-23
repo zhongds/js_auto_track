@@ -7,9 +7,11 @@ export default class WrapError {
   private static isInit: boolean = false;
   // 自动采集数据
   private static isAutoTrack: boolean = true;
-  static autoTrack() {
-    if (WrapError.isInit) return;
+  private static errorConfig: IErrorEventCapacity;
+  static autoTrack(conf: IErrorEventCapacity) {
+    if (!conf || !conf.enable || WrapError.isInit) return;
     WrapError.isInit = true;
+    WrapError.errorConfig = conf;
     const ins = new WrapError();
     ins.init();
   }

@@ -1,30 +1,6 @@
 import { IConfig, setConfig } from "../config/config";
 import { get } from "../request/request";
 
-interface IRemoteConfigData {
-  enable: boolean,
-  collect_event_type: {
-    enableClick?: boolean,
-    enablePV?: boolean,
-    enableError?: boolean,
-    enableApi?: boolean,
-    enableRes?: boolean
-  },
-  collect_click_elm?: {
-    button?: boolean,
-    a?: boolean,
-    input?: boolean,
-    textarea?: boolean,
-    div?: boolean,
-    i?: boolean,
-    img?: boolean,
-    em?: boolean
-  },
-  ignore_page?: {
-    [key:string]: boolean,
-  }
-}
-
 /**
  * 远端配置管理
  */
@@ -65,13 +41,35 @@ export default class RemoteConfig {
   private parseConfig(data: string) {
     try {
       const obj = JSON.parse(data) as IRemoteConfigData;
-      const {enable, collect_event_type, collect_click_elm, ignore_page} = obj;
-      setConfig({
+      const {enable, includes, excludes} = obj;
+      const eventObj = {};
+      const eventKeys = ['pv', 'click', 'api', 'error'];
+      includes.forEach(item => {
+        (item.events || []).forEach(k => {
+          if (eventKeys.indexOf(k) !== -1) {
+            eventObj[k] = { ...item, enable: true };
+            delete eventObj[k].events;
+            if (eventObj[k].pages) {
+              eventObj[k].include_pages = eventObj[k].pages;
+              delete eventObj[k].pages;
+            }
+          }
+        })
+      });
+      excludes.forEach(item => {
+        (item.events || []).forEach(k => {
+          if (eventKeys.indexOf(k) !== -1) {
+            if (item.pages) {
+              eventObj[k].exclude_pages = item.pages;
+            }
+          }
+        })
+      });
+      const conf = {
         enable,
-        ...collect_event_type,
-        collectClickElmType: collect_click_elm,
-        ignorePage: ignore_page,
-      } as IConfig);
+        ...eventObj,
+      } as IConfig;
+      setConfig(conf);
     } catch(err) {
       console.error('解析远端配置失败', err);
       setConfig({enable: false} as IConfig);

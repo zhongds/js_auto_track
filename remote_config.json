@@ -1,23 +1,34 @@
 {
   "enable": true,
-  "collect_event_type": {
-    "enableClick": true,
-    "enablePV": true,
-    "enableError": true,
-    "enableApi": true,
-    "enableRes": true
-  },
-  "collect_click_elm": {
-    "button": true,
-    "a": true,
-    "input": true,
-    "textarea": true,
-    "div": true,
-    "i": true,
-    "img": true,
-    "em": true
-  },
-  "ignore_page": {
-    "https://xxx.yy/aa/d": true
-  }
+  "includes": [
+    {
+      "events": ["pv"],
+      "spa": true,
+      "capture": true
+    },
+    {
+      "events": ["click"],
+      "capture": true,
+      "element_types": ["a", "button", "input", "textarea"]
+    },
+    {
+      "events": ["api", "error"]
+    }
+  ],
+  "excludes": [
+    {
+      "events": ["pv"],
+      "pages": [
+        "https://xxx.dd/a.html",
+        "https://xxx.dd/b.html"
+      ]
+    },
+    {
+      "events": ["click"],
+      "pages": [
+        "https://xxx.dd/a.html",
+        "https://xxx.dd/b.html"
+      ]
+    }
+  ]
 }

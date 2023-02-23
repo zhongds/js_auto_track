@@ -10,16 +10,18 @@ import { setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../models/trace";
 import { report } from "../reporter";
-import { getElmSelector, on } from "../utils/tool";
+import { checkIsReport, getElmSelector, on } from "../utils/tool";
 
 export default class ClickEvent {
   // 只初始化一次
   private static isInit: boolean = false;
   // 自动采集数据
   private static isAutoTrack: boolean = true;
-  static autoTrack() {
-    if (ClickEvent.isInit) return;
+  private static clickConfig: IClickEventCapacity;
+  static autoTrack(conf: IClickEventCapacity) {
+    if (!conf || !conf.enable || ClickEvent.isInit) return;
     ClickEvent.isInit = true;
+    ClickEvent.clickConfig = conf;
     const ins = new ClickEvent();
     ins.init();
   }
@@ -40,10 +42,30 @@ export default class ClickEvent {
     this.hookEventStopPropagation(this.handleClick.bind(this));
   }
 
+  /**
+   * 检查是否需要上报, true-上报
+   * @param data 
+   * @returns 
+   */
+   private checkDataReport(data: IClickEventMessage): boolean {
+    if (ClickEvent.clickConfig) {
+      const {include_pages, exclude_pages} = ClickEvent.clickConfig;
+      return checkIsReport(include_pages, exclude_pages, data.$url);
+    }
+    return false;
+  }
+
   private handleClick(e: Event) {
     if (ClickEvent.isAutoTrack) {
       const data = this.getClickEventMessage(e);
-      report(data);
+
+      if (!this.checkDataReport(data)) {
+        console.log('click点击被过滤, 不上报');
+        return;
+      }
+
+      setClickSpanId(data.$span_id);
+      report(data, ClickEvent.clickConfig.capture);
     }
   }
 
@@ -80,31 +102,26 @@ export default class ClickEvent {
       $element_page_x: (e as PointerEvent).pageX,
       $element_page_y: (e as PointerEvent).pageY,
     }
-    setClickSpanId(comMsg.$span_id);
     return data;
   }
 
   private getTargetElement(e: EventTarget): Element|null {
-    if (!(e instanceof Element)) {
+    const {element_types} = ClickEvent.clickConfig;
+    if (!(e instanceof Element) || !element_types || element_types.length === 0) {
       return null
     }
     let nodeName = e.nodeName.toLowerCase();
-    if (Config.collectClickElmType[nodeName] && nodeName !== 'div') {
+    if (element_types.indexOf(nodeName) !== -1 && nodeName !== 'div') {
       return e;
     }
-    if (nodeName === 'div' && Config.collectClickElmType['div'] && e.children.length === 0) {
+    // 只抓叶子节点
+    if (nodeName === 'div' && element_types.indexOf(nodeName) !== -1 && e.children.length === 0) {
       return e;
     }
-    const keys = Object.keys(COLLECT_CUR_OR_UP_ELM_TYPE).reduce((res, cur) => {
-      if (COLLECT_CUR_OR_UP_ELM_TYPE[cur]) {
-        res.push(cur);
-      }
-      return res;
-    }, []);
     let result = e;
     do {
       result = result.parentElement;
-    } while(result && keys.indexOf(result.nodeName.toLowerCase()) === -1)
+    } while(result && element_types.indexOf(result.nodeName.toLowerCase()) === -1)
     return result;
   }
 }

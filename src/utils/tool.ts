@@ -140,3 +140,32 @@ export function checkIsSameDomain(u1: string): boolean {
   const d1 = u1.replace(reg, '$1');
   return d1 === location.origin;
 }
+
+/**
+ * 页面的命中规则 TODO * 模糊匹配
+ * @param arr 配置的页面地址
+ * @param value 当前地址url
+ * @returns 
+ */
+export function checkIsHit(arr: string[], value: string): boolean {
+  if (!arr || arr.length === 0 || !value) {
+    return false;
+  }
+  const isHit = arr.some(v => value.indexOf(v) !== -1);
+  return isHit;
+}
+
+/**
+ * 检查是否上报
+ * @param includes 包含的url
+ * @param excludes 去除的url
+ * @param value 当前url
+ * @returns 
+ */
+export function checkIsReport(includes: string[], excludes: string[], value: string): boolean {
+  // includes不存在就是所有
+  const isIncluded = includes && includes.length !== 0 ? checkIsHit(includes, data.$url) : true;
+  // excludes不存在就是所有，不踢出
+  const isExcluded = excludes && excludes.length !== 0 ? checkIsHit(excludes, data.$url) : false;
+  return isIncluded && !isExcluded;
+}

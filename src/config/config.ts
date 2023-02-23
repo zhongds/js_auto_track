@@ -19,85 +19,76 @@ export const COLLECT_CUR_OR_UP_ELM_TYPE = {
   textarea: true,
 };
 
-export interface IConfig {
+export interface IOption {
   appId: string, //
   secret: string, // 密钥
   reportUrl: string, //上报地址
-
-  enable?: boolean, // 是否开启全埋点，默认true
-  enablePV?: boolean, //是否上报PV, 带上性能数据
-  enableSPA?: boolean, //是否是单页应用，true-重写pushState和replaceState方法
-  enableClick?: boolean, //是否上报点击事件
-  enableError?: boolean, //是否上报错误
-  enableRes?: boolean, //是否上报资源加载情况
-  enableDbClick?: boolean, //是否上报双击事件
-  enableApi?: boolean, //是否上报http请求数据
-
-  collectClickElmType?: {
-    i?: boolean,
-    img?: boolean,
-    em?: boolean,
-    div?: boolean, // 只抓叶子节点
-    [key: string]: boolean,
-  },
-  ignorePage?: { // 不采集的页面
-    [key: string]: boolean,
-  }
-  remoteUrl?: string, // 远端配置地址
-  enableScreenShot?: boolean, // 是否截图，只支持PV和点击事件截图
+  remoteConfigUrl: string, // 远端配置地址
 }
 
+export interface IConfig extends IOption {
+  enable?: boolean, // 是否开启全埋点，默认true
+  pv?: IPageViewEventCapacity,
+  click?: IClickEventCapacity,
+  api?: IApiEventCapacity,
+  error?: IErrorEventCapacity,
+  res?: IResEventCapacity,
+}
+
+function getDefaultElementTypes(): string[] {
+  const obj = {...DEFAULT_CLICK_ELM_TYPE, ...COLLECT_CUR_OR_UP_ELM_TYPE};
+  const elmTypes = Object.keys(obj).reduce((res, cur) => {
+    if (obj[cur]) {
+      res.push(cur);
+    }
+    return res;
+  }, []);
+  return elmTypes;
+}
+
+// ============只有远端配置开启对应的事件，才会把默认配置跟远端配置合并==============
+// 默认pv的能力
+const defaultPVCapacity: IPageViewEventCapacity = {
+  enable: true,
+  spa: false,
+  capture: false,
+}
+
+const defaultClickCapacity: IClickEventCapacity = {
+  enable: true,
+  capture: false,
+  element_types: getDefaultElementTypes(),
+}
+
+const defaultApiCapacity: IApiEventCapacity = {
+  enable: true,
+}
+
+const defaultErrorCapacity: IErrorEventCapacity = {
+  enable: true,
+}
+//=========================================================================
 
 const defaultConfig: IConfig = {
   appId: '',
   secret: '',
   reportUrl: '',
+  remoteConfigUrl: '',
 
-  enable: true,
-  enablePV: true,
-  enableClick: true,
-  enableError: true,
-
-  enableScreenShot: false,
-  enableSPA: false,
-  enableRes: false,
-  enableDbClick: false,
-  enableApi: false,
-
-  collectClickElmType: {
-    ...DEFAULT_CLICK_ELM_TYPE,
-    ...COLLECT_CUR_OR_UP_ELM_TYPE,
-  }
+  enable: false, // 默认false，不上报
 }
 
 export let Config = defaultConfig;
-export function setConfig(option?: IConfig) {
+
+export function setConfig(conf?: IConfig) {
   Config = {
     ...Config,
-    ...option,
-    collectClickElmType: {
-      ...Config.collectClickElmType,
-      ...option.collectClickElmType,
-    },
-    ignorePage: {
-      ...Config.ignorePage,
-      ...option.ignorePage,
-    }
+    ...conf,
+  };
+  if (Config.click && !Config.click.element_types) {
+    Config.click.element_types = defaultClickCapacity.element_types;
   }
-  changeAutoTrackUpElmType(Config.collectClickElmType);
 }
-
-/**
- * 改变需要向上跟踪的元素类型
- */
-function changeAutoTrackUpElmType(obj: any) {
-  Object.keys(COLLECT_CUR_OR_UP_ELM_TYPE).forEach((k) => {
-    if (obj[k] === false) {
-      COLLECT_CUR_OR_UP_ELM_TYPE[k] = false;
-    }
-  })
-}
-
 
 
 
