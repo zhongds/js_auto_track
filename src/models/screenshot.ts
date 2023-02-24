@@ -17,11 +17,22 @@ export function genScreenshot(name: string, node: Element) {
       domToImage.toBlob(node)
         .then(function (blob) {
           console.log('图片', blob);
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`);
-          xhr.setRequestHeader('Content-Type', 'image/png')
-          xhr.setRequestHeader('Authorization', 'Bearer ' + cred.access_token);
-          xhr.send(blob);
+          if (window.navigator && "function" == typeof window.navigator.sendBeacon ) {
+            const url = 'https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/fn/upload/5yrcemb';
+
+            const form = new FormData();
+            form.append('image', blob);
+            form.append('token', cred.access_token);
+            form.append('filename', name);
+            window.navigator.sendBeacon(url, form);
+          } else {
+            const url = `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`;
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Content-Type', 'image/png')
+            xhr.setRequestHeader('Authorization', 'Bearer ' + cred.access_token);
+            xhr.send(blob);
+          }
         })
         .catch(function (error) {
           console.error('oops, something went wrong!', error);
