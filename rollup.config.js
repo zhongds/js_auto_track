@@ -4,6 +4,7 @@ import commonjs from "rollup-plugin-commonjs";
 import resolve from "rollup-plugin-node-resolve";
 import { uglify } from "rollup-plugin-uglify";
 import replace from 'rollup-plugin-replace';
+import {string} from 'rollup-plugin-string';
 let pkg = require('./package.json');
 
 export default {
@@ -17,6 +18,10 @@ export default {
     replace({
       VERSION: pkg.version,
       delimiters: ['{{', '}}']
+    }),
+    string({
+      // 匹配需要转换的文件类型
+      include: ['**/worker.js'],
     }),
     typescript(),
     commonjs({ extensions: [".js", ".ts"] }),
