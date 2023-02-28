@@ -65,7 +65,7 @@ export default class ClickEvent {
       }
 
       setClickSpanId(data.$span_id);
-      report(data, ClickEvent.clickConfig.capture);
+      report(data);
     }
   }
 

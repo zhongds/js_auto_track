@@ -1,18 +1,13 @@
 {
   "enable": true,
+  "capture": true,
   "includes": [
     {
       "events": ["pv"],
-      "spa": true,
-      "capture": true
+      "spa": true
     },
     {
-      "events": ["click"],
-      "capture": true,
-      "element_types": ["a", "button", "input", "textarea"]
-    },
-    {
-      "events": ["api", "error"]
+      "events": ["api", "error", "click"]
     }
   ],
   "excludes": [

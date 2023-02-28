@@ -39,7 +39,7 @@ export default class PageViewPerf {
   private init() {
     'complete' === window.document.readyState ? this.setPage() : on('load', this.setPage.bind(this));
     this.hookPopstate();
-    if (PageViewPerf.enableSPA) {
+    if (PageViewPerf.pvConfig.spa) {
       this.hookHistorySate('pushState');
       this.hookHistorySate('replaceState');
     }
@@ -89,7 +89,7 @@ export default class PageViewPerf {
         const perf = this.genPerfMessage();
         data.$performance = perf;
         data.$duration = perf.$duration;
-        report(data, PageViewPerf.pvConfig.capture);
+        report(data);
       }
     }, 50)
   }

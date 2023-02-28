@@ -164,8 +164,8 @@ export function checkIsHit(arr: string[], value: string): boolean {
  */
 export function checkIsReport(includes: string[], excludes: string[], value: string): boolean {
   // includes不存在就是所有
-  const isIncluded = includes && includes.length !== 0 ? checkIsHit(includes, data.$url) : true;
+  const isIncluded = includes && includes.length !== 0 ? checkIsHit(includes, value) : true;
   // excludes不存在就是所有，不踢出
-  const isExcluded = excludes && excludes.length !== 0 ? checkIsHit(excludes, data.$url) : false;
+  const isExcluded = excludes && excludes.length !== 0 ? checkIsHit(excludes, value) : false;
   return isIncluded && !isExcluded;
 }

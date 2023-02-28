@@ -13,7 +13,7 @@ export function genScreenshot(name: string, node: Element) {
   try {
     const credStr = localStorage.getItem(key);
     const cred = JSON.parse(credStr);
-    if (Config.enableCapture && cred.access_token) {
+    if (Config.capture && cred.access_token) {
       domToImage.toBlob(node)
         .then(function (blob) {
           console.log('图片', blob);

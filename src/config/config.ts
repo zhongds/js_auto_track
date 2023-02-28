@@ -28,6 +28,7 @@ export interface IOption {
 
 export interface IConfig extends IOption {
   enable?: boolean, // 是否开启全埋点，默认true
+  capture?: boolean, // 是否截图
   pv?: IPageViewEventCapacity,
   click?: IClickEventCapacity,
   api?: IApiEventCapacity,
@@ -51,12 +52,10 @@ function getDefaultElementTypes(): string[] {
 const defaultPVCapacity: IPageViewEventCapacity = {
   enable: true,
   spa: false,
-  capture: false,
 }
 
 const defaultClickCapacity: IClickEventCapacity = {
   enable: true,
-  capture: false,
   element_types: getDefaultElementTypes(),
 }
 
