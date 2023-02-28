@@ -1,6 +1,5 @@
 import domToImage from 'dom-to-image-more';
 import { Config } from '../config/config';
-import GlobalWorker from './global_worker';
 
 /**
  * 生成截图
@@ -18,14 +17,22 @@ export function genScreenshot(name: string, node: Element) {
       domToImage.toBlob(node)
         .then(function (blob) {
           console.log('图片', blob);
+          if (window.navigator && "function" == typeof window.navigator.sendBeacon ) {
+            const url = 'https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/fn/upload/5yrcemb';
 
-          const worker = GlobalWorker.getInstance();
-          worker.postAutoMessage({
-            message: {cmd: 'upload', params: {file: blob, name, token: cred.access_token}},
-            callback: (e) => {
-              console.log('上传图片结果: ', e.data);
-            }
-          })
+            const form = new FormData();
+            form.append('image', blob);
+            form.append('token', cred.access_token);
+            form.append('filename', name);
+            window.navigator.sendBeacon(url, form);
+          } else {
+            const url = `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`;
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', url);
+            xhr.setRequestHeader('Content-Type', 'image/png')
+            xhr.setRequestHeader('Authorization', 'Bearer ' + cred.access_token);
+            xhr.send(blob);
+          }
         })
         .catch(function (error) {
           console.error('oops, something went wrong!', error);
