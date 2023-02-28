@@ -47,7 +47,7 @@ export default class RemoteConfig {
       includes.forEach(item => {
         (item.events || []).forEach(k => {
           if (eventKeys.indexOf(k) !== -1) {
-            eventObj[k] = { ...item, enable: true };
+            eventObj[k] = { ...eventObj[k], ...item, enable: true };
             delete eventObj[k].events;
             if (eventObj[k].pages) {
               eventObj[k].include_pages = eventObj[k].pages;
