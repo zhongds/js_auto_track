@@ -77,7 +77,7 @@ export class RouteIntercept {
  * @returns 
  */
 function checkAndAddSearch2Url(url: string, key: string, value: string): string {
-  if (Config.enableSPA && checkIsSameDomain(url)) {
+  if (Config.pv && Config.pv.spa && checkIsSameDomain(url)) {
     return url;
   }
   return addSearch2Url(url, key, value);

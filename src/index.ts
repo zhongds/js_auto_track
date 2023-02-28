@@ -1,5 +1,5 @@
 import { MemoryCache } from './models/cache';
-import { Config, IConfig, setConfig } from './config/config';
+import { Config, IOption, setConfig } from './config/config';
 import { setGlobalCache } from './config/global';
 import { handleResource } from './handler';
 import ApiPerf from './plugins/Api_perf';
@@ -11,7 +11,6 @@ import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
 import RemoteConfig from './models/remote_config';
 import 'es6-promise/auto';
-
 
 export default class AutoTrackObj {
   static setUserId(fn: Function) {
@@ -26,10 +25,10 @@ export default class AutoTrackObj {
     setDeviceIdFn(fn);
   }
 
-  constructor(option: IConfig) {
+  constructor(option: IOption) {
     setConfig(option);
-    if (option.remoteUrl) {
-      RemoteConfig.fetchConfig(option.remoteUrl, () => {
+    if (option.remoteConfigUrl) {
+      RemoteConfig.fetchConfig(option.remoteConfigUrl, () => {
         this.init();
       })
     } else {
@@ -46,35 +45,15 @@ export default class AutoTrackObj {
 
     setGlobalCache(new MemoryCache());
     new RouteIntercept(); 
-    Config.enableClick && this.addListenClick(); // done
-    Config.enablePV && this.addListenPV(Config.enableSPA); // done
-    Config.enableRes && this.sendResource(); // TODO
-    Config.enableError && this.addListenError(); // done
-    Config.enableApi && this.addListenApi();  // done
-  }
-
-  private addListenClick() {
-    ClickEvent.autoTrack();
-  }
-
-  /**
-   * 上报PV
-   * @param enableSPA 是否支持SPA页面
-   */
-  private addListenPV(enableSPA?: boolean) {
-    PageViewPerf.autoTrack(enableSPA);
+    Config.pv && PageViewPerf.autoTrack(Config.pv); // done
+    Config.click && ClickEvent.autoTrack(Config.click); // done
+    Config.res && this.sendResource(); // TODO
+    Config.error && WrapError.autoTrack(Config.error); // done
+    Config.api && ApiPerf.autoTrack(Config.api);  // done
   }
 
   // 发送资源
   private sendResource() {
     'complete' === window.document.readyState ? handleResource() : on('load', handleResource);
-  }
-
-  private addListenError() {
-    WrapError.autoTrack();
-  }
-
-  private addListenApi() {
-    ApiPerf.autoTrack();
   }
 }

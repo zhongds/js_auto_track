@@ -11,9 +11,11 @@ export default class ApiPerf {
   private static isInit: boolean = false;
   // 自动采集数据
   private static isAutoTrack: boolean = true;
-  static autoTrack() {
-    if (ApiPerf.isInit) return;
+  private static apiConfig: IApiEventCapacity;
+  static autoTrack(conf: IApiEventCapacity) {
+    if (!conf || !conf.enable || ApiPerf.isInit) return;
     ApiPerf.isInit = true;
+    ApiPerf.apiConfig = conf;
     const ins = new ApiPerf();
     ins.init();
   }

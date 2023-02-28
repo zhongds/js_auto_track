@@ -1,7 +1,7 @@
-import { genSpanId, getClickSpanId, getPageSpanId, getParentPageSpanId, getTraceId, setPageSpanId } from "../config/global";
+import { setPageSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
-import { on } from "../utils/tool";
+import { checkIsReport, on } from "../utils/tool";
 
 // 兼容判断
 const supported = {
@@ -16,11 +16,11 @@ export default class PageViewPerf {
   private static isInit: boolean = false;
   // 自动采集数据
   private static isAutoTrack: boolean = true;
-  private static enableSPA: boolean = false;
-  static autoTrack(enableSPA?: boolean) {
-    if (PageViewPerf.isInit) return;
+  private static pvConfig: IPageViewEventCapacity;
+  static autoTrack(pvConfig: IPageViewEventCapacity) {
+    if (!pvConfig || !pvConfig.enable || PageViewPerf.isInit) return;
     PageViewPerf.isInit = true;
-    PageViewPerf.enableSPA = enableSPA || false;
+    PageViewPerf.pvConfig = pvConfig;
     const ins = new PageViewPerf();
     ins.init();
   }
@@ -53,6 +53,19 @@ export default class PageViewPerf {
   }
 
   /**
+   * 检查是否需要上报, true-上报
+   * @param data 
+   * @returns 
+   */
+  private checkDataReport(data: IPageViewMessage): boolean {
+    if (PageViewPerf.pvConfig) {
+      const {include_pages, exclude_pages} = PageViewPerf.pvConfig;
+      return checkIsReport(include_pages, exclude_pages, data.$url);
+    }
+    return false;
+  }
+
+  /**
    * 上报pv + 性能数据
    * @returns 
    */
@@ -62,6 +75,12 @@ export default class PageViewPerf {
       ...comMsg,
       $event_type: '$page_view',
     } as IPageViewMessage;
+    // 过滤数据
+    if (!this.checkDataReport(data)) {
+      console.log('pv被过滤了，不上报');
+      return;
+    }
+
     setPageSpanId(comMsg.$span_id);
 
     let timer = setInterval(() => {
@@ -70,7 +89,7 @@ export default class PageViewPerf {
         const perf = this.genPerfMessage();
         data.$performance = perf;
         data.$duration = perf.$duration;
-        report(data);
+        report(data, PageViewPerf.pvConfig.capture);
       }
     }, 50)
   }

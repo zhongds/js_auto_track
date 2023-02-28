@@ -1,4 +1,4 @@
-import { genSpanId, getPageSpanId, getTraceId } from "../config/global";
+import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
 
@@ -88,7 +88,7 @@ export function getCommonMessage(): ICommonMessage {
     $time: Date.now(),
     $trace_id: getTraceId(),
     $span_id: genSpanId(),
-    $parent_span_id: getPageSpanId(),
+    $parent_span_id: getParentPageSpanId(),
     $user_id: run(Runnable.loginUserIdFn),
     $user_session_id: run(Runnable.userSessionIdFn),
     $device_id: run(Runnable.deviceIdFn)

@@ -4,7 +4,7 @@ import md5 from 'md5';
 import { getGlobalCache } from "./config/global";
 import { genScreenshot } from "./models/screenshot";
 
-export function report(data: ICommonMessage) {
+export function report(data: ICommonMessage, capture?: boolean) {
   console.log('上报数据: ', data);
   if (!data) {
     return;
@@ -15,7 +15,7 @@ export function report(data: ICommonMessage) {
     return;
   }
 
-  if (data.$event_type === '$page_view' || data.$event_type === '$element_click') {
+  if (capture && (data.$event_type === '$page_view' || data.$event_type === '$element_click')) {
     genScreenshot(data.$span_id, document.body);
   }
   
