@@ -111,6 +111,7 @@ interface IRemoteEventItem {
 }
 interface IRemoteConfigData {
   enable: boolean,
+  capture: boolean,
   includes?: IRemoteEventItem[],
   excludes?: IRemoteEventItem[],
 }

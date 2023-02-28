@@ -41,18 +41,19 @@ export default class RemoteConfig {
   private parseConfig(data: string) {
     try {
       const obj = JSON.parse(data) as IRemoteConfigData;
-      const {enable, includes, excludes} = obj;
+      const {enable, capture, includes, excludes} = obj;
       const eventObj = {};
       const eventKeys = ['pv', 'click', 'api', 'error'];
       includes.forEach(item => {
         (item.events || []).forEach(k => {
           if (eventKeys.indexOf(k) !== -1) {
             eventObj[k] = { ...eventObj[k], ...item, enable: true };
-            delete eventObj[k].events;
-            if (eventObj[k].pages) {
-              eventObj[k].include_pages = eventObj[k].pages;
-              delete eventObj[k].pages;
-            }
+            this.transformIncludeData(eventObj[k]);
+          } else if (k === '*') {
+            eventKeys.forEach(ek => {
+              eventObj[ek] = {...eventObj[ek], ...item, enable: true};
+              this.transformIncludeData(eventObj[ek]);
+            })
           }
         })
       });
@@ -67,6 +68,7 @@ export default class RemoteConfig {
       });
       const conf = {
         enable,
+        capture,
         ...eventObj,
       } as IConfig;
       setConfig(conf);
@@ -75,5 +77,17 @@ export default class RemoteConfig {
       setConfig({enable: false} as IConfig);
     }
     this.callbackFn();
+  }
+
+  /**
+   * 转换数据
+   * @param obj 
+   */
+  private transformIncludeData(obj) {
+    delete obj.events;
+    if (obj.pages) {
+      obj.include_pages = obj.pages;
+      delete obj.pages;
+    }
   }
 }
