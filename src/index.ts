@@ -30,27 +30,32 @@ export default class AutoTrackObj {
     setGuidFn(fn);
   }
 
+  /**
+   * 设置通用的全局属性，支持静态和动态设置
+   * @param key 
+   * @param fn 
+   */
   static setGlobalCommonProperty(key: string, fn: CommonPropertyType) {
     setCommonProperty(key, fn);
   }
 
-  constructor(option: IOption) {
+  static init(option: IOption) {
     setConfig(option);
     if (option.log) {TrackLog.setLevel(option.log)}; // 设置日志级别
     if (option.remoteConfigUrl) {
       RemoteConfig.fetchConfig(option.remoteConfigUrl, () => {
         if (Config.log !== option.log) {TrackLog.setLevel(Config.log)}; // 重置日志级别
-        this.init();
+        this.start();
       })
     } else {
       // TODO setTimeout后面去掉，暂时只是为了兼容个人中心页面bug
       setTimeout(() => {
-        this.init();
+        this.start();
       }, 50);
     }
   }
 
-  init() {
+  private static start() {
     TrackLog.info("配置====", Config);
     if (!Config.enable) return;
 
@@ -64,7 +69,7 @@ export default class AutoTrackObj {
   }
 
   // 发送资源
-  private sendResource() {
+  private static sendResource() {
     'complete' === window.document.readyState ? handleResource() : on('load', handleResource);
   }
 }
