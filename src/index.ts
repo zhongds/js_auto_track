@@ -11,6 +11,7 @@ import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
 import RemoteConfig from './models/remote_config';
 import 'es6-promise/auto';
+import TrackLog from './models/log';
 
 export default class AutoTrackObj {
   static setUserId(fn: CommonPropertyType) {
@@ -31,8 +32,10 @@ export default class AutoTrackObj {
 
   constructor(option: IOption) {
     setConfig(option);
+    if (option.log) {TrackLog.setLevel(option.log)}; // 设置日志级别
     if (option.remoteConfigUrl) {
       RemoteConfig.fetchConfig(option.remoteConfigUrl, () => {
+        if (Config.log !== option.log) {TrackLog.setLevel(Config.log)}; // 重置日志级别
         this.init();
       })
     } else {
@@ -44,7 +47,7 @@ export default class AutoTrackObj {
   }
 
   init() {
-    console.log("配置====", Config);
+    TrackLog.info("配置====", Config);
     if (!Config.enable) return;
 
     setGlobalCache(new MemoryCache());

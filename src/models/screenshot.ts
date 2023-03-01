@@ -1,5 +1,6 @@
 import domToImage from 'dom-to-image-more';
 import { Config } from '../config/config';
+import TrackLog from './log';
 
 /**
  * 生成截图
@@ -16,7 +17,7 @@ export function genScreenshot(name: string, node: Element) {
     if (Config.capture && cred.access_token) {
       domToImage.toBlob(node)
         .then(function (blob) {
-          console.log('图片', blob);
+          TrackLog.log('图片', blob);
           const xhr = new XMLHttpRequest();
           xhr.open('POST', `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`);
           xhr.setRequestHeader('Content-Type', 'image/png')
@@ -24,11 +25,11 @@ export function genScreenshot(name: string, node: Element) {
           xhr.send(blob);
         })
         .catch(function (error) {
-          console.error('oops, something went wrong!', error);
+          TrackLog.error('oops, something went wrong!', error);
         });
     }
   } catch (error) {
-    console.error('生成上传图片报错', error);
+    TrackLog.error('生成上传图片报错', error);
   }
 }
 

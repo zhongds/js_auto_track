@@ -1,5 +1,6 @@
 import { IConfig, setConfig } from "../config/config";
 import { get } from "../request/request";
+import TrackLog from "./log";
 
 /**
  * 远端配置管理
@@ -27,12 +28,12 @@ export default class RemoteConfig {
     const _this = this;
     get(url, {
       onError(err) {
-        console.error('拉取远端配置失败: ', err);
+        TrackLog.error('拉取远端配置失败: ', err);
         setConfig({enable: false} as IConfig);
         _this.callbackFn();
       },
       onSuccess(res) {
-        console.log('远端配置内容：', res);
+        TrackLog.log('远端配置内容：', res);
         _this.parseConfig(res);
       },
     })
@@ -73,7 +74,7 @@ export default class RemoteConfig {
       } as IConfig;
       setConfig(conf);
     } catch(err) {
-      console.error('解析远端配置失败', err);
+      TrackLog.error('解析远端配置失败', err);
       setConfig({enable: false} as IConfig);
     }
     this.callbackFn();

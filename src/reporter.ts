@@ -1,17 +1,17 @@
 import { Config } from "./config/config";
-import { warn } from "./utils/tool";
 import md5 from 'md5';
 import { getGlobalCache } from "./config/global";
 import { genScreenshot } from "./models/screenshot";
+import TrackLog from "./models/log";
 
 export function report(data: ICommonMessage) {
-  console.log('上报数据: ', data);
+  TrackLog.log('上报数据: ', data);
   if (!data) {
     return;
   }
   // 避免错误重复上报
   if (cacheIntercept(data)) {
-    console.log('cache, not report ');
+    TrackLog('cache, not report ');
     return;
   }
 
@@ -42,7 +42,7 @@ function cacheIntercept(data: ICommonMessage) {
     impactKeys.forEach((k => delete cloneData[k]));
     const key = JSON.stringify(cloneData);
     if (cache.get(key)) {
-      console.log('命中缓存，不上报');
+      TrackLog.log('命中缓存，不上报');
       return true;
     }
     cache.set(key, 1);

@@ -1,6 +1,7 @@
 import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
+import TrackLog from "./log";
 
 const SDK_ANONYMOUS_ID_TAG = '$sdk_anonymous_id';
 
@@ -86,7 +87,7 @@ function run(fn: CommonPropertyType): any {
     }
     return fn;
   } catch (error) {
-    console.error('error:::', error);
+    TrackLog.error('error:::', error);
   }
   return '';
 }

@@ -8,6 +8,7 @@
 import { COLLECT_CUR_OR_UP_ELM_TYPE, MAX_UP_ELM_LEVEL } from "../config/config";
 import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR } from "../config/constant";
 import { setClickSpanId } from "../config/global";
+import TrackLog from "../models/log";
 import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../models/trace";
 import { report } from "../reporter";
@@ -61,7 +62,7 @@ export default class ClickEvent {
       const data = this.getClickEventMessage(e);
 
       if (!this.checkDataReport(data)) {
-        console.log('click点击被过滤, 不上报');
+        TrackLog.log('click点击被过滤, 不上报');
         return;
       }
 

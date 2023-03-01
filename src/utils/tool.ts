@@ -63,19 +63,6 @@ function mergeElmPath(path: string, lastpath?: string): string {
   return lastpath ? `${path} > ${lastpath}` : path;
 }
 
-export const warn: any = function () {
-  const e = "object" == typeof console ? console.warn : noop;
-  try {
-      const t = {
-          warn: e
-      };
-      t.warn.call(t)
-  } catch (n) {
-      return noop
-  }
-  return e
-}()
-
 export function randomString() {
   for (var e, t, n = 20, r = new Array(n), a = Date.now().toString(36).split(""); n--> 0;) 
     t = (e = 36 * Math.random() | 0).toString(36), r[n] = e % 3 ? t : t.toUpperCase();

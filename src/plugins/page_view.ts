@@ -1,4 +1,5 @@
 import { setPageSpanId } from "../config/global";
+import TrackLog from "../models/log";
 import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
 import { checkIsReport, on } from "../utils/tool";
@@ -77,7 +78,7 @@ export default class PageViewPerf {
     } as IPageViewMessage;
     // 过滤数据
     if (!this.checkDataReport(data)) {
-      console.log('pv被过滤了，不上报');
+      TrackLog.log('pv被过滤了, 不上报');
       return;
     }
 

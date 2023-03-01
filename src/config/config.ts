@@ -29,6 +29,7 @@ export interface IOption {
   secret: string, // 密钥
   reportUrl: string, //上报地址
   remoteConfigUrl: string, // 远端配置地址
+  log?: boolean|number, // 是否打印日志或者设置最低的日志级别：1-log, 2-info, 3-warn, 4-error
 }
 
 export interface IConfig extends IOption {
@@ -78,6 +79,7 @@ const defaultConfig: IConfig = {
   secret: '',
   reportUrl: '',
   remoteConfigUrl: '',
+  log: false, // 默认不打印日志
 
   enable: false, // 默认false，不上报
 }
