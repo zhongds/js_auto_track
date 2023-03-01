@@ -1,7 +1,8 @@
 import { noop } from "../utils/tool";
 
+let WrapConsole = window.console as any;
 if ('object' !== typeof window.console) {
-  window.console = {
+  WrapConsole = {
     log: noop,
     info: noop,
     warn: noop,
@@ -16,25 +17,25 @@ export default class TrackLog {
     this.logLevel = level;
   }
 
-  static log() {
-    this.print('log', 1, arguments);
+  static log(...args) {
+    this.print('log', 1, args);
   }
 
-  static info() {
-    this.print('info', 2, arguments);
+  static info(...args) {
+    this.print('info', 2, args);
   }
 
-  static warn() {
-    this.print('warn', 3, arguments);
+  static warn(...args) {
+    this.print('warn', 3, args);
   }
 
-  static error() {
-    this.print('error', 4, arguments);
+  static error(...args) {
+    this.print('error', 4, args);
   }
 
   private static print(key: string, level: number, args: any) {
     if (!this.logLevel || (typeof this.logLevel === 'number' && this.logLevel < level)) return;
     const arr = args.length === 1 ? [args[0]] : Array.from(null, args);
-    console[key].apply(console, arr);
+    WrapConsole[key].apply(WrapConsole, arr);
   }
 }

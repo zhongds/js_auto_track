@@ -6,7 +6,7 @@ import ApiPerf from './plugins/Api_perf';
 import WrapError from './plugins/error';
 import { on } from './utils/tool';
 import { RouteIntercept } from './models/trace';
-import { setCommonProperty, setDeviceIdFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
+import { setCommonProperty, setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
 import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
 import RemoteConfig from './models/remote_config';
@@ -24,6 +24,10 @@ export default class AutoTrackObj {
 
   static setDeviceId(fn: CommonPropertyType) {
     setDeviceIdFn(fn);
+  }
+
+  static setGuid(fn: CommonPropertyType) {
+    setGuidFn(fn);
   }
 
   static setGlobalCommonProperty(key: string, fn: CommonPropertyType) {

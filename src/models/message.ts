@@ -61,7 +61,7 @@ export function setDeviceIdFn(fn: CommonPropertyType) {
   setCommonProperty('$device_id', fn);
 }
 // 设置guid
-export function setDeviceIdFn(fn: CommonPropertyType) {
+export function setGuidFn(fn: CommonPropertyType) {
   setCommonProperty('$guid', fn);
 }
 

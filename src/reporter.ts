@@ -11,7 +11,7 @@ export function report(data: ICommonMessage) {
   }
   // 避免错误重复上报
   if (cacheIntercept(data)) {
-    TrackLog('cache, not report ');
+    TrackLog.log('cache, not report ');
     return;
   }
 
