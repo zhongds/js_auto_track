@@ -6,23 +6,27 @@ import ApiPerf from './plugins/Api_perf';
 import WrapError from './plugins/error';
 import { on } from './utils/tool';
 import { RouteIntercept } from './models/trace';
-import { setDeviceIdFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
+import { setCommonProperty, setDeviceIdFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
 import PageViewPerf from './plugins/page_view';
 import ClickEvent from './plugins/click_event';
 import RemoteConfig from './models/remote_config';
 import 'es6-promise/auto';
 
 export default class AutoTrackObj {
-  static setUserId(fn: Function) {
+  static setUserId(fn: CommonPropertyType) {
     setLoginUserIdFn(fn);
   }
 
-  static setUserSessionId(fn: Function) {
+  static setUserSessionId(fn: CommonPropertyType) {
     setUserSessionIdFn(fn);
   }
 
-  static setDeviceId(fn: Function) {
+  static setDeviceId(fn: CommonPropertyType) {
     setDeviceIdFn(fn);
+  }
+
+  static setGlobalCommonProperty(key: string, fn: CommonPropertyType) {
+    setCommonProperty(key, fn);
   }
 
   constructor(option: IOption) {

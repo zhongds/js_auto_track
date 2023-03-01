@@ -45,35 +45,46 @@ let CommonMessage = {
 /**
  * 保存延迟获取的方法
  */
-const Runnable = {
-  loginUserIdFn: null,
-  deviceIdFn: null,
-  userSessionIdFn: null,
-} as any;
-export function setLoginUserIdFn(fn: Function) {
-  if (fn && typeof fn === 'function') {
-    Runnable.loginUserIdFn = fn;
-  }
+const Runnable = {} as any;
+
+// 设置userId
+export function setLoginUserIdFn(fn: CommonPropertyType) {
+  setCommonProperty('$user_id', fn);
+}
+// 设置用户的sessionId
+export function setUserSessionIdFn(fn: CommonPropertyType) {
+  setCommonProperty('$user_session_id', fn);
+}
+// 设置deviceId
+export function setDeviceIdFn(fn: CommonPropertyType) {
+  setCommonProperty('$device_id', fn);
+}
+// 设置guid
+export function setDeviceIdFn(fn: CommonPropertyType) {
+  setCommonProperty('$guid', fn);
 }
 
-export function setDeviceIdFn(fn: Function) {
-  if (fn && typeof fn === 'function') {
-    Runnable.deviceIdFn = fn;
+
+/**
+ * 设置全局属性
+ * @param key 通用属性的key
+ * @param fn value值，支持动态和静态
+ * @returns 
+ */
+export function setCommonProperty(key: string, fn: CommonPropertyType) {
+  if (!key || typeof key !== 'string') {
+    return;
   }
+  Runnable[key] = fn;
 }
 
-export function setUserSessionIdFn(fn: Function) {
-  if (fn && typeof fn === 'function') {
-    Runnable.userSessionIdFn = fn;
-  }
-}
-
-function run(fn: Function): string {
+function run(fn: CommonPropertyType): any {
   try {
     if (fn && typeof fn === 'function') {
       const result = fn.call(null);
-      return typeof result === 'string' ? result : '';
+      return typeof result === 'function' ? '[function]' : result;
     }
+    return fn;
   } catch (error) {
     console.error('error:::', error);
   }
@@ -88,9 +99,7 @@ export function getCommonMessage(): ICommonMessage {
     $trace_id: getTraceId(),
     $span_id: genSpanId(),
     $parent_span_id: getParentPageSpanId(),
-    $user_id: run(Runnable.loginUserIdFn),
-    $user_session_id: run(Runnable.userSessionIdFn),
-    $device_id: run(Runnable.deviceIdFn)
   }
+  Object.keys(Runnable).forEach(k => CommonMessage[k] = run(Runnable[k]));
   return CommonMessage;
 }

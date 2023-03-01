@@ -2,6 +2,7 @@ type EventType = '' | '$element_click' | '$page_view' | '$page_leave' | '$config
 type NetworkType = 'slow-2g' | '2g' | '3g' | '4g';
 type ClickType = 'single_click' | 'double_click';
 type APMType = '$error' | '$resource_performance' | '$api';
+type CommonPropertyType = string | boolean | number | object | Function;
 
 interface ICommonMessage {
   $event_type: EventType | APMType,
