@@ -71,8 +71,7 @@ export function setUserSessionIdFn(fn: Function) {
 function run(fn: Function): string {
   try {
     if (fn && typeof fn === 'function') {
-      const args = 1 === arguments.length ? [arguments[0]] : Array.apply(null, arguments);
-      const result = fn.apply(null, args);
+      const result = fn.call(null);
       return typeof result === 'string' ? result : '';
     }
   } catch (error) {

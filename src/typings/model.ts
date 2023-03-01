@@ -52,6 +52,7 @@ interface IClickEventMessage extends ICommonMessage {
   $element_page_x?: number, // 点击的x位置, event.pageX
   $element_page_y?: number, // 点击的y位置, event.pageY
   $click_type?: ClickType, // 单击/双击
+  [key: string]: string, // 业务自定义的属性
 }
 
 interface IPageViewMessage extends ICommonMessage {
@@ -126,6 +127,7 @@ interface IPageViewEventCapacity extends IEventCapacity {
 }
 
 interface IClickEventCapacity extends IEventCapacity {
+  track_attr?: string[],
   element_types?: string[],
   include_pages?: string[],
   exclude_pages?: string[],

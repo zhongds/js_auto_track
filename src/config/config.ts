@@ -19,6 +19,11 @@ export const COLLECT_CUR_OR_UP_ELM_TYPE = {
   textarea: true,
 };
 
+/**
+ * 最多向上查询5层
+ */
+export const MAX_UP_ELM_LEVEL = 5;
+
 export interface IOption {
   appId: string, //
   secret: string, // 密钥

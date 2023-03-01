@@ -32,7 +32,9 @@ export function hookAElClick(e: Event, target: Element, spanId: string) {
   }
   if (newUrl !== url) { // 地址没变就走原来的逻辑
     e.preventDefault();
-    _open(newUrl, tag || '_self');
+    setTimeout(() => {
+      _open(newUrl, tag || '_self');
+    }, 100);
   }
 }
 

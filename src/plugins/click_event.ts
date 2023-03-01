@@ -1,11 +1,12 @@
 /**
  * 点击事件采集数据规则：
- * 1. button/a/input/textarea 自动抓取：向上轮询判断是否是这几个标签
+ * 1. button/a/input/textarea 自动抓取：向上轮询判断是否是这几个标签，限制最多5个
  * 2. 其他元素可配置抓取
  * 3. div元素, 只抓取叶子节点
  */
 
-import { COLLECT_CUR_OR_UP_ELM_TYPE, Config } from "../config/config";
+import { COLLECT_CUR_OR_UP_ELM_TYPE, MAX_UP_ELM_LEVEL } from "../config/config";
+import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR } from "../config/constant";
 import { setClickSpanId } from "../config/global";
 import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../models/trace";
@@ -102,6 +103,15 @@ export default class ClickEvent {
       $element_page_x: (e as PointerEvent).pageX,
       $element_page_y: (e as PointerEvent).pageY,
     }
+    const {track_attr} = ClickEvent.clickConfig;
+    if (track_attr && track_attr.length > 0) {
+      track_attr.forEach(k => {
+        const value = target.getAttribute(k);
+        if (value) {
+          data[k] = value;
+        }
+      })
+    }
     return data;
   }
 
@@ -110,18 +120,32 @@ export default class ClickEvent {
     if (!(e instanceof Element) || !element_types || element_types.length === 0) {
       return null
     }
+    const ignoreAttr = e.getAttribute(AUTO_TRACK_CLICK_IGNORE_ATTR);
     let nodeName = e.nodeName.toLowerCase();
-    if (element_types.indexOf(nodeName) !== -1 && nodeName !== 'div') {
+    if (element_types.indexOf(nodeName) !== -1 && nodeName !== 'div' && !this.checkAttrIsExist(ignoreAttr)) {
       return e;
     }
     // 只抓叶子节点
-    if (nodeName === 'div' && element_types.indexOf(nodeName) !== -1 && e.children.length === 0) {
+    if (nodeName === 'div' && element_types.indexOf(nodeName) !== -1 && e.children.length === 0 && !this.checkAttrIsExist(ignoreAttr)) {
       return e;
     }
+    let count = 0;
     let result = e;
     do {
+      const hit = result.getAttribute(AUTO_TRACK_CLICK_ATTR);
+      if (this.checkAttrIsExist(hit)) {
+        break;
+      }
+      const ignoreAttr2 = result.getAttribute(AUTO_TRACK_CLICK_IGNORE_ATTR);
+      if (element_types.indexOf(result.nodeName.toLowerCase()) !== -1 && !this.checkAttrIsExist(ignoreAttr2)) {
+        break;
+      }
       result = result.parentElement;
-    } while(result && element_types.indexOf(result.nodeName.toLowerCase()) === -1)
+    } while(count++ < MAX_UP_ELM_LEVEL && result)
     return result;
+  }
+
+  private checkAttrIsExist(attr: string) {
+    return attr !== null && attr !== undefined
   }
 }
