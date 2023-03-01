@@ -6,7 +6,7 @@
  */
 
 import { COLLECT_CUR_OR_UP_ELM_TYPE, MAX_UP_ELM_LEVEL } from "../config/config";
-import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR } from "../config/constant";
+import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR, CLICK_EVENT_NAME } from "../config/constant";
 import { setClickSpanId } from "../config/global";
 import TrackLog from "../plugins/log";
 import { getCommonMessage } from "../plugins/message";
@@ -94,7 +94,7 @@ export default class ClickEvent {
     }
     const data: IClickEventMessage = {
       ...comMsg,
-      $event_type: '$element_click',
+      $event_type: CLICK_EVENT_NAME,
       $element_type: target.nodeName.toLowerCase(),
       $element_id: target.id,
       $element_name: target.getAttribute('name'),

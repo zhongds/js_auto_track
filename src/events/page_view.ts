@@ -1,3 +1,4 @@
+import { PV_EVENT_NAME } from "../config/constant";
 import { setPageSpanId } from "../config/global";
 import TrackLog from "../plugins/log";
 import { getCommonMessage } from "../plugins/message";
@@ -74,7 +75,7 @@ export default class PageViewPerf {
     const comMsg = getCommonMessage();
     const data = {
       ...comMsg,
-      $event_type: '$page_view',
+      $event_type: PV_EVENT_NAME,
     } as IPageViewMessage;
     // 过滤数据
     if (!this.checkDataReport(data)) {

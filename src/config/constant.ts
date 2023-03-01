@@ -1,3 +1,12 @@
+// 上报的事件名
+export const PV_EVENT_NAME = '$page_view';
+export const API_EVENT_NAME = '$api';
+export const CLICK_EVENT_NAME = '$element_click';
+export const ERROR_EVENT_NAME = '$error';
+export const RES_EVENT_NAME = '$resource_performance';
+export const PAGE_LEAVE_EVENT_NAME = '$page_leave';
+
+
 /**
  * url上的trace_id
  */

@@ -1,4 +1,5 @@
 import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
+import { getUserProperties, setCommonProperty } from "../models/UserProperty";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
 import TrackLog from "./log";
@@ -43,64 +44,32 @@ let CommonMessage = {
   $charset: document.charset || document.characterSet,
 } as ICommonMessage;
 
-/**
- * 保存延迟获取的方法
- */
-const Runnable = {} as any;
-
 // 设置userId
-export function setLoginUserIdFn(fn: CommonPropertyType) {
+export function setLoginUserIdFn(fn: UserPropertyType) {
   setCommonProperty('$user_id', fn);
 }
 // 设置用户的sessionId
-export function setUserSessionIdFn(fn: CommonPropertyType) {
+export function setUserSessionIdFn(fn: UserPropertyType) {
   setCommonProperty('$user_session_id', fn);
 }
 // 设置deviceId
-export function setDeviceIdFn(fn: CommonPropertyType) {
+export function setDeviceIdFn(fn: UserPropertyType) {
   setCommonProperty('$device_id', fn);
 }
 // 设置guid
-export function setGuidFn(fn: CommonPropertyType) {
+export function setGuidFn(fn: UserPropertyType) {
   setCommonProperty('$guid', fn);
 }
 
-
-/**
- * 设置全局属性
- * @param key 通用属性的key
- * @param fn value值，支持动态和静态
- * @returns 
- */
-export function setCommonProperty(key: string, fn: CommonPropertyType) {
-  if (!key || typeof key !== 'string') {
-    return;
-  }
-  Runnable[key] = fn;
-}
-
-function run(fn: CommonPropertyType): any {
-  try {
-    if (fn && typeof fn === 'function') {
-      const result = fn.call(null);
-      return typeof result === 'function' ? '[function]' : result;
-    }
-    return fn;
-  } catch (error) {
-    TrackLog.error('error:::', error);
-  }
-  return '';
-}
-
-
 export function getCommonMessage(): ICommonMessage {
+  const userProp = getUserProperties();
   CommonMessage = {
     ...CommonMessage,
     $time: Date.now(),
     $trace_id: getTraceId(),
     $span_id: genSpanId(),
     $parent_span_id: getParentPageSpanId(),
+    ...userProp,
   }
-  Object.keys(Runnable).forEach(k => CommonMessage[k] = run(Runnable[k]));
   return CommonMessage;
 }

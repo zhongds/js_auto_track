@@ -1,3 +1,4 @@
+import { ERROR_EVENT_NAME } from "../config/constant";
 import { getCommonMessage } from "../plugins/message";
 import { report } from "../reporter";
 import { off, on } from "../utils/tool";
@@ -62,7 +63,7 @@ export default class WrapError {
     const stackStr = e.error.stack || '';
     const data: IErrorMessage = {
       ...commonMsg,
-      $event_type: '$error',
+      $event_type: ERROR_EVENT_NAME,
       $category_id: 'jsError',
       $err_msg: msg && msg.substring(0, 1e3), // 信息
       $err_detail: stackStr && stackStr.substring(0, 1e3), // 错误栈
@@ -80,7 +81,7 @@ export default class WrapError {
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
-        $event_type: '$error',
+        $event_type: ERROR_EVENT_NAME,
         $category_id: 'resource_error',
         $err_msg: target.outerHTML,
         $err_file: target.src,
@@ -96,7 +97,7 @@ export default class WrapError {
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
-        $event_type: '$error',
+        $event_type: ERROR_EVENT_NAME,
         $category_id: 'promise_error',
         $err_msg: e.reason,
       }

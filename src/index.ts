@@ -6,27 +6,28 @@ import ApiPerf from './events/Api_perf';
 import WrapError from './events/error';
 import { on } from './utils/tool';
 import { RouteIntercept } from './plugins/trace';
-import { setCommonProperty, setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './plugins/message';
+import { setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './plugins/message';
 import PageViewPerf from './events/page_view';
 import ClickEvent from './events/click_event';
 import RemoteConfig from './plugins/remote_config';
 import 'es6-promise/auto';
 import TrackLog from './plugins/log';
+import { setCommonProperty } from './models/UserProperty';
 
 export default class AutoTrackObj {
-  static setUserId(fn: CommonPropertyType) {
+  static setUserId(fn: UserPropertyType) {
     setLoginUserIdFn(fn);
   }
 
-  static setUserSessionId(fn: CommonPropertyType) {
+  static setUserSessionId(fn: UserPropertyType) {
     setUserSessionIdFn(fn);
   }
 
-  static setDeviceId(fn: CommonPropertyType) {
+  static setDeviceId(fn: UserPropertyType) {
     setDeviceIdFn(fn);
   }
 
-  static setGuid(fn: CommonPropertyType) {
+  static setGuid(fn: UserPropertyType) {
     setGuidFn(fn);
   }
 
@@ -35,7 +36,7 @@ export default class AutoTrackObj {
    * @param key 
    * @param fn 基础类型或者function
    */
-  static setGlobalCommonProperty(key: string, fn: CommonPropertyType) {
+  static setGlobalCommonProperty(key: string, fn: UserPropertyType) {
     setCommonProperty(key, fn);
   }
 

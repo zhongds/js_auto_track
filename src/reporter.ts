@@ -3,6 +3,7 @@ import md5 from 'md5';
 import { getGlobalCache } from "./config/global";
 import { genScreenshot } from "./plugins/screenshot";
 import TrackLog from "./plugins/log";
+import { CLICK_EVENT_NAME, PV_EVENT_NAME } from "./config/constant";
 
 export function report(data: ICommonMessage) {
   TrackLog.log('上报数据: ', data);
@@ -15,7 +16,7 @@ export function report(data: ICommonMessage) {
     return;
   }
 
-  if (data.$event_type === '$page_view' || data.$event_type === '$element_click') {
+  if (data.$event_type === PV_EVENT_NAME || data.$event_type === CLICK_EVENT_NAME) {
     genScreenshot(data.$span_id, document.body);
   }
   

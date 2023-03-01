@@ -1,3 +1,4 @@
+import { API_EVENT_NAME } from "../config/constant";
 import { getCommonMessage } from "../plugins/message";
 import { report } from "../reporter";
 
@@ -41,7 +42,7 @@ export default class ApiPerf {
     const comMsg = getCommonMessage();
     const data: IApiPerfMessage = {
       ...comMsg,
-      $event_type: '$api',
+      $event_type: API_EVENT_NAME,
       ...apiData,
     }
     report(data);
