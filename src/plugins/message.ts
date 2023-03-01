@@ -1,5 +1,5 @@
 import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
-import { getUserProperties, setCommonProperty } from "../models/UserProperty";
+import { getUserProperties, setUserProperty } from "../models/UserProperty";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
 import TrackLog from "./log";
@@ -46,19 +46,19 @@ let CommonMessage = {
 
 // 设置userId
 export function setLoginUserIdFn(fn: UserPropertyType) {
-  setCommonProperty('$user_id', fn);
+  setUserProperty('$user_id', fn);
 }
 // 设置用户的sessionId
 export function setUserSessionIdFn(fn: UserPropertyType) {
-  setCommonProperty('$user_session_id', fn);
+  setUserProperty('$user_session_id', fn);
 }
 // 设置deviceId
 export function setDeviceIdFn(fn: UserPropertyType) {
-  setCommonProperty('$device_id', fn);
+  setUserProperty('$device_id', fn);
 }
 // 设置guid
 export function setGuidFn(fn: UserPropertyType) {
-  setCommonProperty('$guid', fn);
+  setUserProperty('$guid', fn);
 }
 
 export function getCommonMessage(): ICommonMessage {

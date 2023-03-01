@@ -12,7 +12,7 @@ import ClickEvent from './events/click_event';
 import RemoteConfig from './plugins/remote_config';
 import 'es6-promise/auto';
 import TrackLog from './plugins/log';
-import { setCommonProperty } from './models/UserProperty';
+import { setUserProperty } from './models/UserProperty';
 
 export default class AutoTrackObj {
   static setUserId(fn: UserPropertyType) {
@@ -37,7 +37,7 @@ export default class AutoTrackObj {
    * @param fn 基础类型或者function
    */
   static setGlobalCommonProperty(key: string, fn: UserPropertyType) {
-    setCommonProperty(key, fn);
+    setUserProperty(key, fn);
   }
 
   static init(option: IOption) {

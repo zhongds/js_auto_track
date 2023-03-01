@@ -12,7 +12,7 @@ import TrackLog from "../plugins/log";
  * @param fn value值，支持动态和静态
  * @returns 
  */
- export function setCommonProperty(key: string, fn: UserPropertyType) {
+ export function setUserProperty(key: string, fn: UserPropertyType) {
   if (!key || typeof key !== 'string') {
     return;
   }
@@ -25,6 +25,14 @@ import TrackLog from "../plugins/log";
  */
 export function getUserProperties() {
   return Object.keys(Runnable).reduce((res, k) => {res[k] = run(Runnable[k]); return res;}, {});
+}
+
+/**
+ * 获取用户通用属性
+ * @returns 
+ */
+export function getUserProperty(key: string) {
+  return key && Runnable[key] ? run(Runnable[key]) : '';
 }
 
 export function run(fn: UserPropertyType): any {

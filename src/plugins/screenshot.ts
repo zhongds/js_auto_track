@@ -1,5 +1,6 @@
 import domToImage from 'dom-to-image-more';
 import { Config } from '../config/config';
+import { getUploadUrl } from '../request/upload';
 import TrackLog from './log';
 
 /**
@@ -15,17 +16,16 @@ export function genScreenshot(name: string, node: Element) {
     const credStr = localStorage.getItem(key);
     const cred = JSON.parse(credStr);
     if (Config.capture && cred.access_token) {
-      domToImage.toBlob(node)
-        .then(function (blob) {
+      Promise.all([getUploadUrl, domToImage.toBlob(node)])
+        .then(([uploadUrl, blob]) => {
           TrackLog.log('图片', blob);
           const xhr = new XMLHttpRequest();
-          xhr.open('POST', `https://2rvk4e3gkdnl7u1kl0k.xbase.xyz/v1/file/personalmaidian/${name}.png`);
+          xhr.open('POST', `${uploadUrl}/${name}.png`);
           xhr.setRequestHeader('Content-Type', 'image/png')
           xhr.setRequestHeader('Authorization', 'Bearer ' + cred.access_token);
           xhr.send(blob);
-        })
-        .catch(function (error) {
-          TrackLog.error('oops, something went wrong!', error);
+        }).catch(function (error) {
+          TrackLog.error('upload image wrong!', error);
         });
     }
   } catch (error) {

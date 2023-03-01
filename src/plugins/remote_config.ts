@@ -26,16 +26,13 @@ export default class RemoteConfig {
 
   private fetchConfig(url: string) {
     const _this = this;
-    get(url, {
-      onError(err) {
-        TrackLog.error('拉取远端配置失败: ', err);
-        setConfig({enable: false} as IConfig);
-        _this.callbackFn();
-      },
-      onSuccess(res) {
-        TrackLog.log('远端配置内容：', res);
-        _this.parseConfig(res);
-      },
+    get(url).then(res => {
+      TrackLog.log('远端配置内容：', res);
+      _this.parseConfig(res);
+    }).catch(err => {
+      TrackLog.error('拉取远端配置失败: ', err);
+      setConfig({enable: false} as IConfig);
+      _this.callbackFn();
     })
   }
 
