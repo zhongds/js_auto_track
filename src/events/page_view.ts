@@ -1,6 +1,6 @@
 import { setPageSpanId } from "../config/global";
-import TrackLog from "../models/log";
-import { getCommonMessage } from "../models/message";
+import TrackLog from "../plugins/log";
+import { getCommonMessage } from "../plugins/message";
 import { report } from "../reporter";
 import { checkIsReport, on } from "../utils/tool";
 

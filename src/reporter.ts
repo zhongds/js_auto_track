@@ -1,8 +1,8 @@
 import { Config } from "./config/config";
 import md5 from 'md5';
 import { getGlobalCache } from "./config/global";
-import { genScreenshot } from "./models/screenshot";
-import TrackLog from "./models/log";
+import { genScreenshot } from "./plugins/screenshot";
+import TrackLog from "./plugins/log";
 
 export function report(data: ICommonMessage) {
   TrackLog.log('上报数据: ', data);

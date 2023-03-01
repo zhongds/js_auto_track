@@ -1,4 +1,4 @@
-import { getCommonMessage } from "../models/message";
+import { getCommonMessage } from "../plugins/message";
 import { report } from "../reporter";
 
 const RESPONSE_MAX_LENGTH = 1000;

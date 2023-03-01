@@ -1,17 +1,17 @@
-import { MemoryCache } from './models/cache';
+import { MemoryCache } from './plugins/cache';
 import { Config, IOption, setConfig } from './config/config';
 import { setGlobalCache } from './config/global';
 import { handleResource } from './handler';
-import ApiPerf from './plugins/Api_perf';
-import WrapError from './plugins/error';
+import ApiPerf from './events/Api_perf';
+import WrapError from './events/error';
 import { on } from './utils/tool';
-import { RouteIntercept } from './models/trace';
-import { setCommonProperty, setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
-import PageViewPerf from './plugins/page_view';
-import ClickEvent from './plugins/click_event';
-import RemoteConfig from './models/remote_config';
+import { RouteIntercept } from './plugins/trace';
+import { setCommonProperty, setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './plugins/message';
+import PageViewPerf from './events/page_view';
+import ClickEvent from './events/click_event';
+import RemoteConfig from './plugins/remote_config';
 import 'es6-promise/auto';
-import TrackLog from './models/log';
+import TrackLog from './plugins/log';
 
 export default class AutoTrackObj {
   static setUserId(fn: CommonPropertyType) {
@@ -33,7 +33,7 @@ export default class AutoTrackObj {
   /**
    * 设置通用的全局属性，支持静态和动态设置
    * @param key 
-   * @param fn 
+   * @param fn 基础类型或者function
    */
   static setGlobalCommonProperty(key: string, fn: CommonPropertyType) {
     setCommonProperty(key, fn);
@@ -53,6 +53,13 @@ export default class AutoTrackObj {
         this.start();
       }, 50);
     }
+  }
+
+  /**
+   * 加载插件
+   */
+  static use() {
+
   }
 
   private static start() {

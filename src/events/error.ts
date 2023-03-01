@@ -1,4 +1,4 @@
-import { getCommonMessage } from "../models/message";
+import { getCommonMessage } from "../plugins/message";
 import { report } from "../reporter";
 import { off, on } from "../utils/tool";
 
