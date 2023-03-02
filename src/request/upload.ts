@@ -15,7 +15,7 @@ export function getUploadUrl(): Promise<string> {
       return Promise.reject('lack user_id or device_id');
     }
     let params = userId ? {user_id: userId} : {device_id: deviceId};
-    return post(url, params).then(v => {
+    return post(url, JSON.stringify(params)).then(v => {
       const data = JSON.parse(v);
       if (data && data.capture && data.capture.enable && data.capture.url) {
         return data.capture.url;
