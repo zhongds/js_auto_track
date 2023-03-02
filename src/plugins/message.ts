@@ -1,5 +1,5 @@
 import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
-import { getUserProperties, setUserProperty } from "../models/user_property";
+import { getUserCommonProperties, setUserCommonProperty } from "../models/user_property";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
 import TrackLog from "./log";
@@ -46,30 +46,30 @@ let CommonMessage = {
 
 // 设置userId
 export function setLoginUserIdFn(fn: UserPropertyType) {
-  setUserProperty('$user_id', fn);
+  setUserCommonProperty('$user_id', fn);
 }
 // 设置用户的sessionId
 export function setUserSessionIdFn(fn: UserPropertyType) {
-  setUserProperty('$user_session_id', fn);
+  setUserCommonProperty('$user_session_id', fn);
 }
 // 设置deviceId
 export function setDeviceIdFn(fn: UserPropertyType) {
-  setUserProperty('$device_id', fn);
+  setUserCommonProperty('$device_id', fn);
 }
 // 设置guid
 export function setGuidFn(fn: UserPropertyType) {
-  setUserProperty('$guid', fn);
+  setUserCommonProperty('$guid', fn);
 }
 
 export function getCommonMessage(): ICommonMessage {
-  const userProp = getUserProperties();
+  const userCommProp = getUserCommonProperties();
   CommonMessage = {
     ...CommonMessage,
     $time: Date.now(),
     $trace_id: getTraceId(),
     $span_id: genSpanId(),
     $parent_span_id: getParentPageSpanId(),
-    ...userProp,
+    ...userCommProp,
   }
   return CommonMessage;
 }

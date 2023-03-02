@@ -1,5 +1,5 @@
 import { EVENT_MESSAGE_INTERCEPTOR, PV_EVENT_NAME } from "../config/constant";
-import { transUserProperties } from "../models/user_property";
+import { transUserCommonProperties } from "../models/user_property";
 import PluginManager from "../plugin_manager";
 import { checkIsObject } from "../utils/tool";
 
@@ -19,6 +19,8 @@ class InjectProperty implements IBasePlugin {
 
   // 用户自定义事件属性
   static properties = [];
+
+  name = 'inject-event-property';
   
   // 插件use的时候会调用setup
   setup(): void {
@@ -58,7 +60,7 @@ class InjectProperty implements IBasePlugin {
       if (checkIsObject(f)) {
         const {events=[], properties={}} = f as IInjectConfig;
         if (events.indexOf(msg.$event_type) > -1) {
-          const pureProps = transUserProperties(properties);
+          const pureProps = transUserCommonProperties(properties);
           result = { ...result, ...pureProps };
         }
       } else if (typeof f === 'function') {

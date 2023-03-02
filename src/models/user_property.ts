@@ -13,7 +13,7 @@ import { checkIsObject } from "../utils/tool";
  * @param fn value值，支持动态和静态
  * @returns 
  */
- export function setUserProperty(key: string, fn: UserPropertyType) {
+ export function setUserCommonProperty(key: string, fn: UserPropertyType) {
   if (!key || typeof key !== 'string') {
     return;
   }
@@ -24,8 +24,8 @@ import { checkIsObject } from "../utils/tool";
  * 获取用户通用属性
  * @returns 
  */
-export function getUserProperties() {
-  return transUserProperties(Runnable);
+export function getUserCommonProperties() {
+  return transUserCommonProperties(Runnable);
 }
 
 /**
@@ -33,7 +33,7 @@ export function getUserProperties() {
  * @param obj 对象
  * @returns 
  */
-export function transUserProperties(obj: any) {
+export function transUserCommonProperties(obj: any) {
   if (!checkIsObject(obj)) return {};
   return Object.keys(obj).reduce((res, k) => {res[k] = run(obj[k]); return res;}, {});
 }
@@ -42,7 +42,7 @@ export function transUserProperties(obj: any) {
  * 获取用户通用属性
  * @returns 
  */
-export function getUserProperty(key: string) {
+export function getUserCommonProperty(key: string) {
   return key && Runnable[key] ? run(Runnable[key]) : '';
 }
 

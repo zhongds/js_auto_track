@@ -3,6 +3,7 @@
  */
 
 interface IBasePlugin {
+  name: string;
   setup(option?): void;
 }
 

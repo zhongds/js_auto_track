@@ -12,8 +12,9 @@ import ClickEvent from './events/click_event';
 import RemoteConfig from './plugins/remote_config';
 import 'es6-promise/auto';
 import TrackLog from './plugins/log';
-import { setUserProperty } from './models/user_property';
+import { setUserCommonProperty } from './models/user_property';
 import PluginManager from './plugin_manager';
+import UserDefined from './events/user_defined';
 
 export default class AutoTrackObj {
 
@@ -39,7 +40,7 @@ export default class AutoTrackObj {
    * @param fn 基础类型或者function
    */
   static setGlobalCommonProperty(key: string, fn: UserPropertyType) {
-    setUserProperty(key, fn);
+    setUserCommonProperty(key, fn);
   }
 
   static init(option: IOption) {
@@ -76,7 +77,16 @@ export default class AutoTrackObj {
     'complete' === window.document.readyState ? handleResource() : on('load', handleResource);
   }
 
+  /**
+   * 加载插件
+   * @param plugin 插件
+   * @param option 插件配置
+   */
   static use(plugin: IBasePlugin, option?) {
     PluginManager.use(plugin, option);
+  }
+
+  static track(eventName: string, data: UserMessage) {
+    UserDefined.track(eventName, data);
   }
 }

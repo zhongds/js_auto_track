@@ -1,4 +1,4 @@
-type EventType = '' | '$element_click' | '$page_view' | '$page_leave' | '$config_reload';
+type EventType = '' | '$element_click' | '$page_view' | '$page_leave' | '$config_reload' | '$user_defined';
 type NetworkType = 'slow-2g' | '2g' | '3g' | '4g';
 type ClickType = 'single_click' | 'double_click';
 type APMType = '$error' | '$resource_performance' | '$api';
@@ -56,6 +56,13 @@ interface IClickEventMessage extends ICommonMessage {
   $element_page_x?: number; // 点击的x位置, event.pageX
   $element_page_y?: number; // 点击的y位置, event.pageY
   $click_type?: ClickType; // 单击/双击
+}
+
+/**
+ * 用户手动上报的自定义事件
+ */
+interface IUserDefinedEventMessage extends ICommonMessage {
+  $event_name: string, // 只有用户自定义的事件才有
 }
 
 interface IPageViewMessage extends ICommonMessage {

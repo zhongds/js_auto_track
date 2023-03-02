@@ -1,5 +1,5 @@
 import { Config } from "../config/config";
-import { getUserProperty } from "../models/user_property";
+import { getUserCommonProperty } from "../models/user_property";
 import TrackLog from "../plugins/log";
 import { post } from "./request";
 
@@ -8,8 +8,8 @@ export function getUploadUrl(): Promise<string> {
   if (uploadUrl) return Promise.resolve(uploadUrl);
   if (Config.capture) {
     const url = Config.env === 'release' ? 'http://xldc.xunlei.com/config/v1/info' : 'http://xldc-test.xunlei.com/config/v1/info';
-    const userId = getUserProperty('$user_id');
-    const deviceId = getUserProperty('$device_id');
+    const userId = getUserCommonProperty('$user_id');
+    const deviceId = getUserCommonProperty('$device_id');
     if (!userId && !deviceId) {
       TrackLog.warn('user_id和device_id都不存在, 无法获取图片上传地址');
       return Promise.reject('lack user_id or device_id');
