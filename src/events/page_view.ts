@@ -82,7 +82,7 @@ export default class PageViewPerf {
         TrackLog.log('pv被过滤了, 不上报');
         return;
       }
-      setPageSpanId(comMsg.$span_id);
+      setPageSpanId(data.$span_id);
       report(data);
     } else {
       const timer = setInterval(() => {

@@ -21,7 +21,7 @@ import { URL_SPAN_ID_KEY, URL_TRACE_ID_KEY } from './constant';
   },
   cache: {} as MemoryCache,
   isReport: false,
-  pageLoadendTime: number, // 当前页面加载完成时间，用来计算页面停留时长
+  pageLoadendTime: 0, // 当前页面加载完成时间，用来计算页面停留时长
 }
 
 // 1. 先从从url 获取trace_id和spanId 2. 获取不到再生成
