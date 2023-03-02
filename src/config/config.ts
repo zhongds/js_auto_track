@@ -41,6 +41,7 @@ export interface IConfig extends IOption {
   api?: IApiEventCapacity;
   error?: IErrorEventCapacity;
   res?: IResEventCapacity;
+  page_leave?: IPageLeaveEventCapacity;
 }
 
 function getDefaultElementTypes(): string[] {

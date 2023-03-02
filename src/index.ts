@@ -15,6 +15,7 @@ import TrackLog from './plugins/log';
 import { setUserCommonProperty } from './models/user_property';
 import PluginManager from './plugin_manager';
 import UserDefined from './events/user_defined';
+import PageLeave from './events/page_leave';
 
 export default class AutoTrackObj {
 
@@ -70,6 +71,7 @@ export default class AutoTrackObj {
     Config.res && this.sendResource(); // TODO
     Config.error && WrapError.autoTrack(Config.error); // done
     Config.api && ApiPerf.autoTrack(Config.api);  // done
+    Config.page_leave && PageLeave.autoTrack(Config.page_leave); // done
   }
 
   // 发送资源

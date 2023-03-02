@@ -135,6 +135,11 @@ interface IPageViewEventCapacity extends IEventCapacity {
   include_pages?: string[];
   exclude_pages?: string[];
 }
+// 跟pv绑定，单独开启不上报
+interface IPageLeaveEventCapacity extends IEventCapacity {
+  include_pages?: string[];
+  exclude_pages?: string[];
+}
 
 interface IClickEventCapacity extends IEventCapacity {
   track_attr?: string[];

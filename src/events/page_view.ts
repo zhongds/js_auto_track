@@ -1,5 +1,5 @@
 import { PV_EVENT_NAME } from "../config/constant";
-import { setPageSpanId } from "../config/global";
+import { setPageLoadendTime, setPageSpanId } from "../config/global";
 import TrackLog from "../plugins/log";
 import { getCommonMessage } from "../plugins/message";
 import { report } from "../reporter";
@@ -51,7 +51,7 @@ export default class PageViewPerf {
    * 页面变化，上报PV
    */
   private setPage() {
-    PageViewPerf.isAutoTrack && this.handlePV();
+     this.handlePV();
   }
 
   /**
@@ -72,28 +72,39 @@ export default class PageViewPerf {
    * @returns 
    */
   private handlePV() {
+    if (window.performance.timing.loadEventEnd) {
+      // 设置页面加载完成的时间
+      setPageLoadendTime(Date.now());
+
+      const data = this.genReportData();
+      // 过滤数据
+      if (!PageViewPerf.isAutoTrack || !this.checkDataReport(data)) {
+        TrackLog.log('pv被过滤了, 不上报');
+        return;
+      }
+      setPageSpanId(comMsg.$span_id);
+      report(data);
+    } else {
+      const timer = setInterval(() => {
+        if (window.performance.timing.loadEventEnd) {
+          clearInterval(timer);
+          this.handlePV();
+        }
+      }, 50)
+    }
+  }
+
+  private genReportData(): IPageViewMessage {
     const comMsg = getCommonMessage();
     const data = {
       ...comMsg,
       $event_type: PV_EVENT_NAME,
     } as IPageViewMessage;
-    // 过滤数据
-    if (!this.checkDataReport(data)) {
-      TrackLog.log('pv被过滤了, 不上报');
-      return;
-    }
-
-    setPageSpanId(comMsg.$span_id);
-
-    let timer = setInterval(() => {
-      if (window.performance.timing.loadEventEnd) {
-        clearInterval(timer);
-        const perf = this.genPerfMessage();
-        data.$performance = perf;
-        data.$duration = perf.$duration;
-        report(data);
-      }
-    }, 50)
+    
+    const perf = this.genPerfMessage();
+    data.$performance = perf;
+    data.$duration = perf.$duration;
+    return data;
   }
 
   /**
