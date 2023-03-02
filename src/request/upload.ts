@@ -1,7 +1,7 @@
 import { Config } from "../config/config";
 import { getUserCommonProperty } from "../models/user_property";
 import TrackLog from "../plugins/log";
-import { post } from "./request";
+import { IPostOption, post } from "./request";
 
 const uploadUrl = '';
 export function getUploadUrl(): Promise<string> {
@@ -15,7 +15,10 @@ export function getUploadUrl(): Promise<string> {
       return Promise.reject('lack user_id or device_id');
     }
     let params = userId ? {user_id: userId} : {device_id: deviceId};
-    return post(url, JSON.stringify(params)).then(v => {
+    const option: IPostOption = {
+      body: JSON.stringify(params),
+    }
+    return post(url, option).then(v => {
       const data = JSON.parse(v);
       if (data && data.capture && data.capture.enable && data.capture.url) {
         return data.capture.url;

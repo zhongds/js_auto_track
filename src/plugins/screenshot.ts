@@ -1,5 +1,7 @@
 import domToImage from 'dom-to-image-more';
 import { Config } from '../config/config';
+import { getUserCommonProperty } from '../models/user_property';
+import { IPostOption, post } from '../request/request';
 import { getUploadUrl } from '../request/upload';
 import TrackLog from './log';
 
@@ -11,19 +13,24 @@ import TrackLog from './log';
  */
 export function genScreenshot(name: string, node: Element) {
   if (!node || !(node instanceof Element)) return;
-  const key = 'credentials_XVJVzaJv8vKHzVCk'; // TODO 先写死了内网可上传图片
   try {
-    const credStr = localStorage.getItem(key);
-    const cred = JSON.parse(credStr);
-    if (Config.capture && cred.access_token) {
+    if (Config.capture) {
       Promise.all([getUploadUrl, domToImage.toBlob(node)])
         .then(([uploadUrl, blob]) => {
           TrackLog.log('图片', blob);
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', `${uploadUrl}/${name}.png`);
-          xhr.setRequestHeader('Content-Type', 'image/png')
-          xhr.setRequestHeader('Authorization', 'Bearer ' + cred.access_token);
-          xhr.send(blob);
+          
+          const userId = getUserCommonProperty('$user_id');
+          const deviceId = getUserCommonProperty('$device_id');
+          const url = `${uploadUrl}?user_id=${userId}&app_id=${Config.appId}&filename=${name}&device_id=${deviceId}`
+          const params: IPostOption = {
+            header: {
+              'Content-Type': 'image/png',
+            },
+            body: blob,
+          }
+          return post(url, params)
+        }).then(() => {
+          TrackLog.log('upload image success!');
         }).catch(function (error) {
           TrackLog.error('upload image wrong!', error);
         });

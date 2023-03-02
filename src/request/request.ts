@@ -20,13 +20,23 @@ export function get(url: string): Promise<string> {
   })
 }
 
-export function post(url: string, body: string): Promise<string> {
+export interface IPostOption {
+  body: XMLHttpRequestBodyInit|null,
+  header?: {
+    [key: string]: string,
+  },
+}
+
+export function post(url: string, option?: IPostOption): Promise<string> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
   
-    //Send the proper header information along with the request
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    //Send the proper header information along with the request
+    if (option && option.header) {
+      Object.keys(option.header).forEach(k => xhr.setRequestHeader(k, option.header[k]));
+    }
   
     xhr.onreadystatechange = () => { // Call a function when the state changes.
       if (xhr.readyState === 4) {
@@ -37,6 +47,6 @@ export function post(url: string, body: string): Promise<string> {
         }
       }
     }
-    xhr.send(body);
+    xhr.send(option && option.body);
   })
 }
