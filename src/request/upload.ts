@@ -1,5 +1,5 @@
 import { Config } from "../config/config";
-import { getUserProperty } from "../models/UserProperty";
+import { getUserProperty } from "../models/user_property";
 import TrackLog from "../plugins/log";
 import { post } from "./request";
 

@@ -156,3 +156,13 @@ export function checkIsReport(includes: string[], excludes: string[], value: str
   const isExcluded = excludes && excludes.length !== 0 ? checkIsHit(excludes, value) : false;
   return isIncluded && !isExcluded;
 }
+
+/**
+ * 检查是否是对象
+ * @param v object
+ * @returns 
+ */
+export function checkIsObject(v) {
+  return typeof v === 'object' && v.toString() === '[object Object]';
+}
+

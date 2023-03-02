@@ -3,7 +3,7 @@
  */
 
 interface IBasePlugin {
-  setup(): void;
+  setup(option?): void;
 }
 
 interface IUsePlugin {

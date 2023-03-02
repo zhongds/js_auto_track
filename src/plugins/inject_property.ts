@@ -1,26 +1,35 @@
-import { PV_EVENT_NAME } from "../config/constant";
+import { EVENT_MESSAGE_INTERCEPTOR, PV_EVENT_NAME } from "../config/constant";
+import { transUserProperties } from "../models/user_property";
+import PluginManager from "../plugin_manager";
+import { checkIsObject } from "../utils/tool";
 
-interface IInjectConfig {
+export interface IInjectConfig {
   events: Array<EventType|APMType>;
   properties: {
     [key: string]: UserPropertyType;
   }
 }
 
-type DynamicInjectFn = (msg: ICommonMessage) => {[key: string]: string|boolean|number|object};
+export type DynamicInjectFn = (msg: ICommonMessage) => UserMessage;
 
 /**
  * 注入自定义属性（静态属性和动态属性）
  */
-export default class InjectProperty implements IBasePlugin {
+class InjectProperty implements IBasePlugin {
 
   // 用户自定义事件属性
-  static eventUserProp: any = {};
-  static dynamicUserInjectFnArr = [];
+  static properties = [];
   
-  // use的时候会调用setup，把数据清空
+  // 插件use的时候会调用setup
   setup(): void {
-    InjectProperty.eventUserProp = {};
+    const _this = this;
+    PluginManager.registerInterceptor(EVENT_MESSAGE_INTERCEPTOR, {
+      extend_props: {
+        entry(msg: ICommonMessage) {
+          return _this.addProperty(msg);
+        },
+      }
+    } as IEventMessageInterceptorOption)
   }
 
   /**
@@ -30,20 +39,38 @@ export default class InjectProperty implements IBasePlugin {
    */
   inject(injConf: IInjectConfig): void {
     if (!injConf || !injConf.events || injConf.events.length === 0 || !injConf.properties) return;
-    const {events, properties} = injConf;
-    for (const i in events) {
-      InjectProperty.eventUserProp[events[i]] = { ...InjectProperty.eventUserProp[events[i]], ...properties };
-    }
+    InjectProperty.properties.push(injConf);
   }
 
   /**
-   * 动态注入
-   * @param fn 
+   * 返回的结果会跟原有的数据合并上报
+   * @param fn 方法，结果返回新增的数据结构
    */
-  dynamicInject(fn: DynamicInjectFn) {
+  hook(fn: DynamicInjectFn): void {
     if (typeof fn === 'function') {
-      InjectProperty.dynamicUserInjectFnArr.push(fn);
+      InjectProperty.properties.push(fn);
     }
   }
+
+  private addProperty(msg: ICommonMessage): UserMessage {
+    const result = {};
+    InjectProperty.properties.forEach(f => {
+      if (checkIsObject(f)) {
+        const {events=[], properties={}} = f as IInjectConfig;
+        if (events.indexOf(msg.$event_type) > -1) {
+          const pureProps = transUserProperties(properties);
+          result = { ...result, ...pureProps };
+        }
+      } else if (typeof f === 'function') {
+        const res = f.call(null, msg);
+        if (checkIsObject(res)) {
+          result = { ...result, ...res };
+        }
+      }
+    });
+    return result;
+  }
 }
+
+export default new InjectProperty();
 

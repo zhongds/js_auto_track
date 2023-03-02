@@ -1,4 +1,5 @@
 import TrackLog from "../plugins/log";
+import { checkIsObject } from "../utils/tool";
 
 
 /**
@@ -24,7 +25,17 @@ import TrackLog from "../plugins/log";
  * @returns 
  */
 export function getUserProperties() {
-  return Object.keys(Runnable).reduce((res, k) => {res[k] = run(Runnable[k]); return res;}, {});
+  return transUserProperties(Runnable);
+}
+
+/**
+ * 转换用户数据：主要是检查到function就执行，处理动态获取的值
+ * @param obj 对象
+ * @returns 
+ */
+export function transUserProperties(obj: any) {
+  if (!checkIsObject(obj)) return {};
+  return Object.keys(obj).reduce((res, k) => {res[k] = run(obj[k]); return res;}, {});
 }
 
 /**

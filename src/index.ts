@@ -12,9 +12,11 @@ import ClickEvent from './events/click_event';
 import RemoteConfig from './plugins/remote_config';
 import 'es6-promise/auto';
 import TrackLog from './plugins/log';
-import { setUserProperty } from './models/UserProperty';
+import { setUserProperty } from './models/user_property';
+import PluginManager from './plugin_manager';
 
 export default class AutoTrackObj {
+
   static setUserId(fn: UserPropertyType) {
     setLoginUserIdFn(fn);
   }
@@ -56,13 +58,6 @@ export default class AutoTrackObj {
     }
   }
 
-  /**
-   * 加载插件
-   */
-  static use() {
-
-  }
-
   private static start() {
     TrackLog.info("配置====", Config);
     if (!Config.enable) return;
@@ -79,5 +74,9 @@ export default class AutoTrackObj {
   // 发送资源
   private static sendResource() {
     'complete' === window.document.readyState ? handleResource() : on('load', handleResource);
+  }
+
+  static use(plugin: IBasePlugin, option?) {
+    PluginManager.use(plugin, option);
   }
 }

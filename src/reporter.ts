@@ -4,6 +4,7 @@ import { getGlobalCache } from "./config/global";
 import { genScreenshot } from "./plugins/screenshot";
 import TrackLog from "./plugins/log";
 import { CLICK_EVENT_NAME, PV_EVENT_NAME } from "./config/constant";
+import PluginManager from "./plugin_manager";
 
 export function report(data: ICommonMessage) {
   TrackLog.log('上报数据: ', data);
@@ -19,6 +20,9 @@ export function report(data: ICommonMessage) {
   if (data.$event_type === PV_EVENT_NAME || data.$event_type === CLICK_EVENT_NAME) {
     genScreenshot(data.$span_id, document.body);
   }
+
+  // 做一层拦截
+  data = PluginManager.interceptEventMessage(data);
   
   if (false && window.navigator && "function" == typeof window.navigator.sendBeacon ) {
     window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(data))

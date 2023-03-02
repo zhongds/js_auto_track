@@ -3,6 +3,8 @@ type NetworkType = 'slow-2g' | '2g' | '3g' | '4g';
 type ClickType = 'single_click' | 'double_click';
 type APMType = '$error' | '$resource_performance' | '$api';
 type UserPropertyType = string | boolean | number | object | Function;
+type ReportMessageType = string | boolean | number | object;
+type UserMessage = {[key: string]: ReportMessageType};
 
 interface ICommonMessage {
   $event_type: EventType | APMType;
@@ -40,6 +42,7 @@ interface ICommonMessage {
   $trace_id: string; // 
   $span_id: string; // 
   $parent_span_id: string; //
+  [key: string]: ReportMessageType; // 业务自定义的属性
 }
 
 
@@ -53,7 +56,6 @@ interface IClickEventMessage extends ICommonMessage {
   $element_page_x?: number; // 点击的x位置, event.pageX
   $element_page_y?: number; // 点击的y位置, event.pageY
   $click_type?: ClickType; // 单击/双击
-  [key: string]: string|boolean|number|object; // 业务自定义的属性
 }
 
 interface IPageViewMessage extends ICommonMessage {
@@ -144,4 +146,10 @@ interface IApiEventCapacity extends IEventCapacity{
 }
 interface IErrorEventCapacity extends IEventCapacity {
   
+}
+
+interface IEventMessageInterceptorOption {
+  extend_props: {
+    entry(msg: ICommonMessage) : {[key: string]: ReportMessageType}
+  }
 }

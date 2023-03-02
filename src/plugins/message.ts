@@ -1,5 +1,5 @@
 import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
-import { getUserProperties, setUserProperty } from "../models/UserProperty";
+import { getUserProperties, setUserProperty } from "../models/user_property";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
 import TrackLog from "./log";

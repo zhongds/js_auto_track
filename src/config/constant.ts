@@ -6,6 +6,9 @@ export const ERROR_EVENT_NAME = '$error';
 export const RES_EVENT_NAME = '$resource_performance';
 export const PAGE_LEAVE_EVENT_NAME = '$page_leave';
 
+// 拦截器名
+export const EVENT_MESSAGE_INTERCEPTOR = 'event_message_interceptor';
+
 
 /**
  * url上的trace_id
