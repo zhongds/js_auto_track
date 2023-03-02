@@ -1,15 +1,8 @@
-import { noop } from "../utils/tool";
+import { arguments2Arr } from "../utils/tool";
 
-let WrapConsole = window.console as any;
-if ('object' !== typeof window.console) {
-  WrapConsole = {
-    log: noop,
-    info: noop,
-    warn: noop,
-    error: noop,
-  };
-}
-
+/**
+ * 包装日志
+ */
 export default class TrackLog {
   private static logLevel: boolean|number = false;
 
@@ -17,25 +10,36 @@ export default class TrackLog {
     this.logLevel = level;
   }
 
-  static log(...args) {
-    this.print('log', 1, args);
+  static log() {
+    if (this.checkIsPrint(1)){
+      const arr = arguments2Arr(arguments);
+      console.log(...arr);
+    }
   }
 
-  static info(...args) {
-    this.print('info', 2, args);
+  static info() {
+    if (this.checkIsPrint(2)) {
+      const arr = arguments2Arr(arguments);
+      console.info(...arr);
+    };
   }
 
-  static warn(...args) {
-    this.print('warn', 3, args);
+  static warn() {
+    if (this.checkIsPrint(3)) {
+      const arr = arguments2Arr(arguments);
+      console.warn(...arr);
+    };
   }
 
-  static error(...args) {
-    this.print('error', 4, args);
+  static error() {
+    if (this.checkIsPrint(4)) {
+      const arr = arguments2Arr(arguments);
+      console.error(...arr);
+    };
   }
 
-  private static print(key: string, level: number, args: any) {
-    if (!this.logLevel || (typeof this.logLevel === 'number' && this.logLevel < level)) return;
-    const arr = args.length === 1 ? [args[0]] : Array.from(null, args);
-    WrapConsole[key].apply(WrapConsole, arr);
+  private static checkIsPrint(level: number): boolean {
+    if (!this.logLevel || (typeof this.logLevel === 'number' && this.logLevel > level)) return false;
+    return true;
   }
 }

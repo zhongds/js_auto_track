@@ -15,10 +15,10 @@ export function genScreenshot(name: string, node: Element) {
   if (!node || !(node instanceof Element)) return;
   try {
     if (Config.capture) {
-      Promise.all([getUploadUrl, domToImage.toBlob(node)])
+      Promise.all([getUploadUrl(), domToImage.toBlob(node)])
         .then(([uploadUrl, blob]) => {
           TrackLog.log('图片', blob);
-          
+
           const userId = getUserCommonProperty('$user_id');
           const deviceId = getUserCommonProperty('$device_id');
           const url = `${uploadUrl}?user_id=${userId}&app_id=${Config.appId}&filename=${name}&device_id=${deviceId}`
@@ -28,7 +28,7 @@ export function genScreenshot(name: string, node: Element) {
             },
             body: blob,
           }
-          return post(url, params)
+          return post(url, params);
         }).then(() => {
           TrackLog.log('upload image success!');
         }).catch(function (error) {

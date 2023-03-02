@@ -166,3 +166,11 @@ export function checkIsObject(v) {
   return typeof v === 'object' && v.toString() === '[object Object]';
 }
 
+/**
+ * 方法参数arguments转换成数组
+ * @param args
+ * @returns 
+ */
+export function arguments2Arr(args) {
+  return args.length === 1 ? [args[0]] : Array.apply(null, args);
+}
