@@ -61,8 +61,8 @@ export default class ClickEvent {
     if (ClickEvent.isAutoTrack) {
       const data = this.getClickEventMessage(e);
 
-      if (!this.checkDataReport(data)) {
-        TrackLog.log('click点击被过滤, 不上报');
+      if (!data || !this.checkDataReport(data)) {
+        TrackLog.log('该点击元素不采集', e.target);
         return;
       }
 
@@ -116,10 +116,22 @@ export default class ClickEvent {
     return data;
   }
 
+  /**
+   * 获取目标元素
+   * 1. 元素标识了 data-track-click
+   * 2. 元素类型命中了，并且没有设置data-track-click-ignore属性
+   * 3. 命中了div元素并且没有设置data-track-click-ignore属性，并且以下条件二选一：a. 叶子节点
+   * @param e 
+   * @returns 
+   */
   private getTargetElement(e: EventTarget): Element|null {
     const {element_types} = ClickEvent.clickConfig;
     if (!(e instanceof Element) || !element_types || element_types.length === 0) {
       return null
+    }
+    const hit = e.getAttribute(AUTO_TRACK_CLICK_ATTR);
+    if (this.checkAttrIsExist(hit)) {
+      return e;
     }
     const ignoreAttr = e.getAttribute(AUTO_TRACK_CLICK_IGNORE_ATTR);
     let nodeName = e.nodeName.toLowerCase();
@@ -127,23 +139,36 @@ export default class ClickEvent {
       return e;
     }
     // 只抓叶子节点
-    if (nodeName === 'div' && element_types.indexOf(nodeName) !== -1 && e.children.length === 0 && !this.checkAttrIsExist(ignoreAttr)) {
+    if (nodeName === 'div' && element_types.indexOf(nodeName) !== -1 && !this.checkAttrIsExist(ignoreAttr) && this.checkDivHit(e)) {
       return e;
     }
     let count = 0;
     let result = e;
     do {
-      const hit = result.getAttribute(AUTO_TRACK_CLICK_ATTR);
-      if (this.checkAttrIsExist(hit)) {
-        break;
+      result = result.parentElement;
+      if (!(result instanceof Element)) {
+        return null;
+      }
+      if (this.checkAttrIsExist(result.getAttribute(AUTO_TRACK_CLICK_ATTR))) {
+        return result;
       }
       const ignoreAttr2 = result.getAttribute(AUTO_TRACK_CLICK_IGNORE_ATTR);
-      if (element_types.indexOf(result.nodeName.toLowerCase()) !== -1 && !this.checkAttrIsExist(ignoreAttr2)) {
-        break;
+      const parNodeName = result.nodeName.toLowerCase();
+      // div只抓叶子节点
+      if (parNodeName === 'div' && element_types.indexOf(parNodeName) !== -1 && !this.checkAttrIsExist(ignoreAttr)) {
+        if (this.checkDivHit(result)) {
+          return result;
+        }
+      } else if (element_types.indexOf(parNodeName) !== -1 && COLLECT_CUR_OR_UP_ELM_TYPE[parNodeName] && !this.checkAttrIsExist(ignoreAttr2)) {
+        return result;
       }
-      result = result.parentElement;
-    } while(count++ < MAX_UP_ELM_LEVEL && result)
-    return result;
+    } while(count++ < MAX_UP_ELM_LEVEL)
+    return null;
+  }
+
+  // div只判断叶子节点
+  private checkDivHit(e: Element) {
+    return e.children.length === 0;
   }
 
   private checkAttrIsExist(attr: string) {

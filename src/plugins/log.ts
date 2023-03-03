@@ -1,5 +1,3 @@
-import { arguments2Arr } from "../utils/tool";
-
 /**
  * 包装日志
  */
@@ -10,30 +8,26 @@ export default class TrackLog {
     this.logLevel = level;
   }
 
-  static log() {
+  static log(...arr) {
     if (this.checkIsPrint(1)){
-      const arr = arguments2Arr(arguments);
       console.log(...arr);
     }
   }
 
-  static info() {
+  static info(...arr) {
     if (this.checkIsPrint(2)) {
-      const arr = arguments2Arr(arguments);
       console.info(...arr);
     };
   }
 
-  static warn() {
+  static warn(...arr) {
     if (this.checkIsPrint(3)) {
-      const arr = arguments2Arr(arguments);
       console.warn(...arr);
     };
   }
 
-  static error() {
+  static error(...arr) {
     if (this.checkIsPrint(4)) {
-      const arr = arguments2Arr(arguments);
       console.error(...arr);
     };
   }
