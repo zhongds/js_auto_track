@@ -7,6 +7,7 @@ import { CLICK_EVENT_NAME, PV_EVENT_NAME } from "./config/constant";
 import PluginManager from "./plugin_manager";
 import {gzip} from 'pako';
 
+const ReportDataRetryKey = '$track_sdk_report_data_retry'; // 重试
 export function report(data: ICommonMessage) {
   TrackLog.log('上报数据: ', data);
   if (!data) {
@@ -30,10 +31,34 @@ export function report(data: ICommonMessage) {
   } else {
     const url = _createUrl(data);
     sendImg(url, function () {
-      
-    }, function () {
-      
+      TrackLog.log('track data report success');
+      reportLocalData();
+    }, function (err) {
+      TrackLog.error('track data report error', err);
+      cacheUrl2Local(url);
     })
+  }
+}
+
+function cacheUrl2Local(url: string) {
+  try {
+    const arrStr = localStorage.getItem(ReportDataRetryKey);
+    const arr = arrStr ? JSON.parse(arrStr) : [];
+    arr.push(url);
+    localStorage.setItem(ReportDataRetryKey, JSON.stringify(arr));
+  } catch(err) {
+    TrackLog.error('report url cache to localStorage error:', err);
+  }
+}
+
+function reportLocalData() {
+  try {
+    const arrStr = localStorage.getItem(ReportDataRetryKey);
+    const arr = JSON.parse(arrStr);
+    
+    arr.forEach(v => sendImg(v));
+  } catch(err) {
+    TrackLog.error('get report url from localStorage error:', err);
   }
 }
 
@@ -56,7 +81,7 @@ function cacheIntercept(data: ICommonMessage) {
   return false;
 }
 
-function sendImg(src, successCallback, errorCallback) {
+function sendImg(src, successCallback?, errorCallback?) {
   const img = new Image();
   img.onload = successCallback;
   img.onerror = errorCallback;
