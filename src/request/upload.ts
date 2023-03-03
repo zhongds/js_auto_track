@@ -7,7 +7,7 @@ const uploadUrl = '';
 export function getUploadUrl(): Promise<string> {
   if (uploadUrl) return Promise.resolve(uploadUrl);
   if (Config.capture) {
-    const url = Config.env === 'release' ? 'http://xldc.xunlei.com/config/v1/info' : 'http://xldc-test.xunlei.com/config/v1/info';
+    const url = Config.env === 'release' ? 'https://xldc.xunlei.com/config/v1/info' : 'https://xldc-test.xunlei.com/config/v1/info';
     const userId = getUserCommonProperty('$user_id');
     const deviceId = getUserCommonProperty('$device_id');
     if (!userId && !deviceId) {
