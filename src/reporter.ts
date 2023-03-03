@@ -5,6 +5,7 @@ import { genScreenshot } from "./plugins/screenshot";
 import TrackLog from "./plugins/log";
 import { CLICK_EVENT_NAME, PV_EVENT_NAME } from "./config/constant";
 import PluginManager from "./plugin_manager";
+import {gzip} from 'pako';
 
 export function report(data: ICommonMessage) {
   TrackLog.log('上报数据: ', data);
@@ -62,7 +63,7 @@ function sendImg(src, successCallback, errorCallback) {
   img.src = src;
 }
 
-const version = '1.0.0';
+const version = '{{VERSION}}';
 
 var _createUrl = function (queue) {
   var param;
@@ -80,13 +81,31 @@ var _createUrl = function (queue) {
 
   param = JSON.stringify(param);
 
+  let addGzip = '';
+  if (typeof btoa === 'function') {
+    param = genCompressData(param);
+    addGzip = '&gzip=1';
+  }
+  
   const {appId, secret, reportUrl} = Config;
-
   value = 'appId=' + appId + 'log=' + param + 'v=' + version;
 
   sig = md5(value + secret);
 
-  query = 'appId=' + appId + '&log=' + encodeURIComponent(param) + '&v=' + version + '&sig=' + sig;
+  query = 'appId=' + appId + '&log=' + encodeURIComponent(param) + '&v=' + version + '&sig=' + sig + addGzip;
 
   return reportUrl + '?' + query; 
+}
+
+function genCompressData(msg: string) {
+  // Next, convert the string to a Uint8Array
+  const stringAsUint8Array = new TextEncoder().encode(msg);
+  // Finally, gzip the Uint8Array using pako
+  const compressedData = gzip(stringAsUint8Array);
+  // You can convert the compressed data to a string if needed
+  const compressedString = new TextDecoder().decode(compressedData);
+  // Convert compressed data to a base64-encoded string
+  const base64Data = btoa(String.fromCharCode.apply(null, compressedData));
+  
+  return base64Data;
 }
