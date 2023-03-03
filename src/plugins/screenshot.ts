@@ -32,7 +32,7 @@ export function genScreenshot(name: string, node: Element) {
         }).then(() => {
           TrackLog.log('upload image success!');
         }).catch(function (error) {
-          TrackLog.error('upload image wrong!', error);
+          TrackLog.log('reject upload image: ', error);
         });
     }
   } catch (error) {

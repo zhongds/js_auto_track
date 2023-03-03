@@ -3,8 +3,8 @@
   "capture": true,
   "includes": [
     {
-      "events": ["pv"],
-      "spa": true
+      "events": ["pv", "page_leave"],
+      "spa": false
     },
     {
       "events": ["click"],
