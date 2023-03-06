@@ -55,7 +55,7 @@ function reportLocalData() {
   try {
     const arrStr = localStorage.getItem(ReportDataRetryKey);
     const arr = JSON.parse(arrStr);
-    
+    // TODO
     arr.forEach(v => sendImg(v));
   } catch(err) {
     TrackLog.error('get report url from localStorage error:', err);
