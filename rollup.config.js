@@ -1,10 +1,12 @@
-import babel from "rollup-plugin-babel";
+import babel from "@rollup/plugin-babel";
 import typescript from "rollup-plugin-typescript2";
-import commonjs from "rollup-plugin-commonjs";
-import resolve from "rollup-plugin-node-resolve";
+import commonjs from "@rollup/plugin-commonjs";
+import resolve from "@rollup/plugin-node-resolve";
 import { uglify } from "rollup-plugin-uglify";
-import replace from 'rollup-plugin-replace';
+import replace from '@rollup/plugin-replace';
 let pkg = require('./package.json');
+
+console.log("package json： " + pkg.version)
 
 export default {
   input: "src/index.ts",

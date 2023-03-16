@@ -15,6 +15,8 @@
     "moduleResolution": "node",
     "stripInternal": false,
     "target": "ES5",
+    // "typeRoots": ["./node_modules/@types", "./typings"],
+    // "types": ["resolve"],
     "outDir": "dist",
     "lib": [
       "es5",
