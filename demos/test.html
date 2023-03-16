@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>demo</title>
+  <script src="../dist/auto_track.js"></script>
+  <script>
+    try {
+      localStorage.setItem('cur_user_id', 'aaaaa');
+      autoTrackObj.setUserId(function(){
+        return localStorage.getItem('cur_user_id');
+      })
+      autoTrackObj.init({
+        reportUrl: 'https://xldc-test.xunlei.com/rcv/v6/js',
+        remoteConfigUrl: 'https://2s2or4vyf6jw2zso9u5.xbase.xyz/v1/file/track/remote_config.json',
+        appId: '20142',
+        secret: '2cfd994e8a0770d006af162c3bfd9213',
+        log: true,
+      });
+    } catch (err) {
+      console.log('auto track err');
+    }
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
