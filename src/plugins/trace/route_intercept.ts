@@ -34,7 +34,7 @@ export function hookAElClick(e: Event, target: Element, spanId: string) {
     e.preventDefault();
     setTimeout(() => {
       _open(newUrl, tag || '_self');
-    }, 100);
+    }, 50);
   }
 }
 
