@@ -1,10 +1,10 @@
+import commonjs from "@rollup/plugin-commonjs";
 import babel from "@rollup/plugin-babel";
 import typescript from "rollup-plugin-typescript2";
-import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import { uglify } from "rollup-plugin-uglify";
 import replace from '@rollup/plugin-replace';
-let pkg = require('./package.json');
+import pkg from './package.json' assert { type: 'json' };
 
 console.log("package json： " + pkg.version)
 

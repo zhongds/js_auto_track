@@ -55,7 +55,7 @@ class InjectProperty implements IBasePlugin {
   }
 
   private addProperty(msg: ICommonMessage): UserMessage {
-    const result = {};
+    let result = {};
     InjectProperty.properties.forEach(f => {
       if (checkIsObject(f)) {
         const {events=[], properties={}} = f as IInjectConfig;
