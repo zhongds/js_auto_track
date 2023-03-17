@@ -6,8 +6,6 @@ import { uglify } from "rollup-plugin-uglify";
 import replace from '@rollup/plugin-replace';
 import pkg from './package.json' assert { type: 'json' };
 
-console.log("package json： " + pkg.version)
-
 export default {
   input: "src/index.ts",
   output: {
