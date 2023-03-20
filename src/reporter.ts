@@ -30,13 +30,7 @@ export function report(data: ICommonMessage) {
     window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(data))
   } else {
     const url = _createUrl(data);
-    sendImg(url, function () {
-      TrackLog.log('track data report success');
-      reportLocalData();
-    }, function (err) {
-      TrackLog.error('track data report error', err);
-      cacheUrl2Local(url);
-    })
+    sendImg(url)
   }
 }
 
@@ -83,8 +77,6 @@ function cacheIntercept(data: ICommonMessage) {
 
 function sendImg(src, successCallback?, errorCallback?) {
   const img = new Image();
-  img.onload = successCallback;
-  img.onerror = errorCallback;
   img.src = src;
 }
 

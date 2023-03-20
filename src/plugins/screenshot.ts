@@ -15,8 +15,8 @@ export function genScreenshot(name: string, node: Element) {
   if (!node || !(node instanceof Element)) return;
   try {
     if (Config.capture) {
-      Promise.all([getUploadUrl(), domToImage.toBlob(node)])
-        .then(([uploadUrl, blob]) => {
+      getUploadUrl().then(uploadUrl => {
+        domToImage.toBlob(node).then(blob => {
           TrackLog.log('图片', blob);
 
           const userId = getUserCommonProperty('$user_id');
@@ -34,6 +34,7 @@ export function genScreenshot(name: string, node: Element) {
         }).catch(function (error) {
           TrackLog.log('reject upload image: ', error);
         });
+      })
     }
   } catch (error) {
     TrackLog.error('生成上传图片报错', error);

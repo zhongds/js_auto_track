@@ -156,7 +156,7 @@ export default class PageViewPerf {
       }
     }
 
-    // 从开始发起这个页面的访问开始算起,减去重定向跳转的时间,在performanceV2版本下才进行计算,v1版本的fetchStart是时间戳而不是相对于访问起始点的相对时间
+    // 首屏时间：从开始发起这个页面的访问开始算起,减去重定向跳转的时间,在performanceV2版本下才进行计算,v1版本的fetchStart是时间戳而不是相对于访问起始点的相对时间
     if (times.$fmp && supported.PerformanceNavigationTiming) times.$fmp = Math.round(times.$fmp - t.fetchStart);
 
     // 白屏时间 (从请求开始到浏览器开始解析第一批HTML文档字节的时间差)
