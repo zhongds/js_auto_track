@@ -36,11 +36,6 @@ let CommonMessage = {
   $screen_width: window.screen.width || window.outerWidth,
   $viewpoint_height: window.innerHeight,
   $viewpoint_width: window.innerWidth,
-  $page_id: location.href,
-  $url: location.href,
-  $domain: location.host,
-  $referrer: document.referrer,
-  $title: document.title,
   $charset: document.charset || document.characterSet,
 } as ICommonMessage;
 
@@ -65,6 +60,11 @@ export function getCommonMessage(): ICommonMessage {
   const userCommProp = getUserCommonProperties();
   CommonMessage = {
     ...CommonMessage,
+    $page_id: location.href,
+    $url: location.href,
+    $domain: location.host,
+    $referrer: document.referrer,
+    $title: document.title,
     $time: Date.now(),
     $trace_id: getTraceId(),
     $span_id: genSpanId(),

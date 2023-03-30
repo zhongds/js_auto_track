@@ -76,7 +76,7 @@
      const data = {
        ...comMsg,
        $event_type: PAGE_LEAVE_EVENT_NAME,
-       $duration: Date.now() - startTime,
+       $duration: (Date.now() - startTime)/1000,
      } as IPageLeaveMessage;
      return data;
    }

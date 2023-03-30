@@ -97,7 +97,7 @@ export default class ClickEvent {
       $event_type: CLICK_EVENT_NAME,
       $element_type: target.nodeName.toLowerCase(),
       $element_id: target.id,
-      $element_name: target.getAttribute('name'),
+      $element_name: target.getAttribute('name') || '',
       $element_path: getElmSelector(target),
       $element_content: target.innerHTML,
       $click_type: 'single_click',
