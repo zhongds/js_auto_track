@@ -23,32 +23,25 @@ class PageViewPlugin implements IBasePlugin {
   private static isInit: boolean = false;
   // 自动采集数据
   private isAutoTrack: boolean = true;
-  private pvConfig: IPageViewEventCapacity;
+  private pvConfig = {} as IPageViewEventCapacity;
 
   name: string = 'page_view_plugin';
 
   setup(client: ITrackClient, conf: IPageViewEventCapacity): void {
     if (!conf || !conf.enable || PageViewPlugin.isInit) return;
     PageViewPlugin.isInit = true;
+    this.isAutoTrack = true;
     this.pvConfig = conf;
-    const ins = new PageViewPlugin();
-    ins.init();
+    this.init();
   }
 
+  /**
+   * 
+   */
   destroy() {
+    PageViewPlugin.isInit = false;
     this.isAutoTrack = false;
   }
-
-  // /**
-  //  * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
-  //  */
-  // static stopTrack() {
-  //   PageViewPlugin.isAutoTrack = false;
-  // }
-
-  // static resumeTrack() {
-  //   PageViewPlugin.isAutoTrack = true;
-  // }
 
   private init() {
     'complete' === window.document.readyState ? this.setPage() : on('load', this.setPage.bind(this));
@@ -63,7 +56,12 @@ class PageViewPlugin implements IBasePlugin {
    * 页面变化，上报PV
    */
   private setPage() {
-     this.handlePV();
+    // 过滤数据
+    if (!this.isAutoTrack) {
+      TrackLog.log('pv不采集');
+      return;
+    }
+    this.handlePV();
   }
 
   /**
@@ -90,18 +88,16 @@ class PageViewPlugin implements IBasePlugin {
 
       const data = this.genReportData();
       // 过滤数据
-      if (!this.isAutoTrack || !this.checkDataReport(data)) {
+      if (!this.checkDataReport(data)) {
         TrackLog.log('pv被过滤了, 不上报');
         return;
       }
       setPageSpanId(data.$span_id);
       report(data);
     } else {
-      const timer = setInterval(() => {
-        if (window.performance.timing.loadEventEnd) {
-          clearInterval(timer);
-          this.handlePV();
-        }
+      const timer = setTimeout(() => {
+        clearTimeout(timer);
+        this.handlePV();
       }, 50)
     }
   }
@@ -113,9 +109,11 @@ class PageViewPlugin implements IBasePlugin {
       $event_type: PV_EVENT_NAME,
     } as IPageViewMessage;
     
-    const perf = this.genPerfMessage();
-    data.$performance = perf;
-    data.$duration = perf.$duration;
+    if (this.pvConfig.isPerf) {
+      const perf = this.genPerfMessage();
+      data.$performance = perf;
+      data.$duration = perf.$duration;  
+    }
     return data;
   }
 
