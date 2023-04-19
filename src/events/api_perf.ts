@@ -1,5 +1,5 @@
 import { API_EVENT_NAME } from "../config/constant";
-import { getCommonMessage } from "../plugins/message";
+import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
 
 const RESPONSE_MAX_LENGTH = 1000;

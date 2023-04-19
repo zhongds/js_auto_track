@@ -1,7 +1,7 @@
 import { PV_EVENT_NAME } from "../config/constant";
 import { setPageLoadendTime, setPageSpanId } from "../config/global";
 import TrackLog from "../plugins/log";
-import { getCommonMessage } from "../plugins/message";
+import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
 import { checkIsReport, on } from "../utils/tool";
 

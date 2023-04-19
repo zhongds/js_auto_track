@@ -6,7 +6,7 @@ import ApiPerf from './events/Api_perf';
 import WrapError from './events/error';
 import { on } from './utils/tool';
 import { RouteIntercept } from './plugins/trace';
-import { setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './plugins/message';
+import { setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
 import PageViewPerf from './events/page_view';
 import ClickEvent from './events/click_event';
 import RemoteConfig from './plugins/remote_config';

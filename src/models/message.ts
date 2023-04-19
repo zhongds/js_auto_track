@@ -1,8 +1,7 @@
-import { genSpanId, getPageSpanId, getParentPageSpanId, getTraceId } from "../config/global";
-import { getUserCommonProperties, setUserCommonProperty } from "../models/user_property";
+import { genSpanId, getParentPageSpanId, getTraceId } from "../config/global";
+import { getUserCommonProperties, setUserCommonProperty } from "./user_property";
 import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
 import { randomString } from "../utils/tool";
-import TrackLog from "./log";
 
 const SDK_ANONYMOUS_ID_TAG = '$track_sdk_anonymous_id';
 

@@ -1,5 +1,5 @@
 import { ERROR_EVENT_NAME } from "../config/constant";
-import { getCommonMessage } from "../plugins/message";
+import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
 import { off, on } from "../utils/tool";
 

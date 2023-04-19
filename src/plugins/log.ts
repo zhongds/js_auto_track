@@ -35,7 +35,11 @@ export default class TrackLog {
 
   static error(...arr) {
     if (this.checkIsPrint(4)) {
-      console.error(...arr);
+      try {
+        console.error(`[${TAG} ${new Error().stack.split('\n')[2].trim()}]`, ...arr);
+      } catch (error) {
+        console.error(...arr);
+      }
     };
   }
 

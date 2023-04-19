@@ -27,7 +27,7 @@ export default class TrackClient implements ITrackClient {
   /**
    * 上报之前
    */
-  beforeReport(fn?) {
+  beforeReport(msg) {
     
   }
 

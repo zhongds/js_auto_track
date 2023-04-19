@@ -1,4 +1,4 @@
-import { getCommonMessage } from "../plugins/message";
+import { getCommonMessage } from "../models/message";
 import { report } from "../reporter";
 import { checkIsObject } from "../utils/tool";
 

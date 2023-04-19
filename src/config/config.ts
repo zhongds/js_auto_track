@@ -1,3 +1,5 @@
+import defaultStorage from "./storage";
+
 /**
  * 默认点击元素类型，只判断点击的元素，不会向上查找
  * true-监听该类型元素的点击事件
@@ -31,6 +33,7 @@ export interface IOption {
   remoteConfigUrl: string; // 远端配置地址
   log?: boolean|number; // 是否打印日志或者设置最低的日志级别：1-log, 2-info, 3-warn, 4-error
   env?: 'dev'|'release';
+  storage?: IStorage;
 }
 
 export interface IConfig extends IOption {
@@ -83,6 +86,7 @@ const defaultConfig: IConfig = {
   reportUrl: '',
   remoteConfigUrl: '',
   log: false, // 默认不打印日志
+  storage: defaultStorage,
 
   enable: false, // 默认false，不上报
 }

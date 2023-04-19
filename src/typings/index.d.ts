@@ -172,9 +172,7 @@ interface IEventMessageInterceptorOption {
  */
 interface ITrackClient {
   version: string;
-
   use(plugin: IBasePlugin): void;
-  
   beforeReport(fn?): void;
 }
 
@@ -184,8 +182,8 @@ interface IPluginManager {
 
 interface IBasePlugin {
   name: string;
-
   setup(client: ITrackClient, option?: object): void;
+  destroy(): void;
 }
 
 interface IUsePlugin {

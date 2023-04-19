@@ -1,9 +1,9 @@
 import { PV_EVENT_NAME } from "../config/constant";
 import { setPageLoadendTime, setPageSpanId } from "../config/global";
-import TrackLog from "../plugins/log";
-import { getCommonMessage } from "../plugins/message";
+import TrackLog from "./log";
 import { report } from "../reporter";
 import { checkIsReport, on } from "../utils/tool";
+import { getCommonMessage } from "../models/message";
 
 // 兼容判断
 const supported = {
@@ -13,10 +13,6 @@ const supported = {
   MutationObserver: 'MutationObserver' in window,
   PerformanceNavigationTiming: 'PerformanceNavigationTiming' in window,
 };
-
-export interface PageViewPluginOption {
-  
-}
 
 class PageViewPlugin implements IBasePlugin {
   // 只初始化一次

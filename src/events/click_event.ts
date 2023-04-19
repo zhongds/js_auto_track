@@ -9,7 +9,7 @@ import { COLLECT_CUR_OR_UP_ELM_TYPE, MAX_UP_ELM_LEVEL } from "../config/config";
 import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR, CLICK_EVENT_NAME } from "../config/constant";
 import { setClickSpanId } from "../config/global";
 import TrackLog from "../plugins/log";
-import { getCommonMessage } from "../plugins/message";
+import { getCommonMessage } from "../models/message";
 import { hookAElClick } from "../plugins/trace";
 import { report } from "../reporter";
 import { checkIsReport, getElmSelector, on } from "../utils/tool";
