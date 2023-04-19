@@ -59,6 +59,7 @@ function getDefaultElementTypes(): string[] {
 // 默认pv的能力
 const defaultPVCapacity: IPageViewEventCapacity = {
   enable: true,
+  isPerf: true,
   spa: false,
 }
 

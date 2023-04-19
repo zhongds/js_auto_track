@@ -4,9 +4,9 @@
 class PluginManager {
   plugins = [];
 
-  add(client: ITrackClient, plugin: IBasePlugin, option?: object) {
+  add(client: ITrackClient, plugin: IBasePlugin) {
     if (this.checkIsPlugin(plugin)) {
-      plugin.setup(client, option);
+      plugin.setup(client);
       // this.plugins.push(plugin);
     }
   }

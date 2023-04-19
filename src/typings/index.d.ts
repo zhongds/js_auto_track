@@ -132,6 +132,7 @@ interface IEventCapacity {
 }
 interface IPageViewEventCapacity extends IEventCapacity {
   spa?: boolean; // 是否是单页应用，true-重写pushState和replaceState方法
+  isPerf?: boolean; // 是否增加pv的performance上报
   include_pages?: string[];
   exclude_pages?: string[];
 }
@@ -165,3 +166,30 @@ interface IEventMessageInterceptorOption {
     entry(msg: ICommonMessage) : {[key: string]: ReportMessageType}
   }
 }
+
+/**
+ * 插件接口
+ */
+interface ITrackClient {
+  version: string;
+
+  use(plugin: IBasePlugin): void;
+  
+  beforeReport(fn?): void;
+}
+
+interface IPluginManager {
+  add(client: ITrackClient, plugin: IBasePlugin);
+}
+
+interface IBasePlugin {
+  name: string;
+
+  setup(client: ITrackClient, option?: object): void;
+}
+
+interface IUsePlugin {
+  use(plugin: IBasePlugin, option?: any): IBasePlugin;
+}
+
+

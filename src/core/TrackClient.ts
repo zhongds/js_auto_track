@@ -21,7 +21,7 @@ export default class TrackClient implements ITrackClient {
    * 加载插件
    */
   use(plugin: IBasePlugin, option?: object): void {
-    this.pluginManagerIns.add(this, plugin, option);
+    this.pluginManagerIns.add(this, plugin);
   }
 
   /**

@@ -26,7 +26,7 @@ export function report(data: ICommonMessage) {
   // 做一层拦截
   data = PluginManager.interceptEventMessage(data);
   
-  if (false && window.navigator && "function" == typeof window.navigator.sendBeacon ) {
+  if (false && window.navigator && "function" == typeof window.navigator.sendBeacon) {
     window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(data))
   } else {
     const url = _createUrl(data);
