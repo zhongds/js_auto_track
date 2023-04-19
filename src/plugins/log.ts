@@ -1,6 +1,9 @@
 /**
  * 包装日志
  */
+
+const TAG = 'TRACK_LOG';
+
 export default class TrackLog {
   private static logLevel: boolean|number = false;
 
@@ -10,7 +13,11 @@ export default class TrackLog {
 
   static log(...arr) {
     if (this.checkIsPrint(1)){
-      console.log(...arr);
+      try {
+        console.log(`[${TAG} ${new Error().stack.split('\n')[2].trim()}]`, ...arr);
+      } catch (error) {
+        console.log(...arr);
+      }
     }
   }
 
