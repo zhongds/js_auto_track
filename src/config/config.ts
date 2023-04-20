@@ -68,6 +68,7 @@ const defaultConfig: IConfig = {
   storage: defaultStorage,
 
   enable: false, // 默认false，不上报
+  capture: false, // 默认不截图
 }
 
 export let Config = defaultConfig;

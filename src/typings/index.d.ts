@@ -114,19 +114,6 @@ interface IApiPerfData {
   $api_msg?: string; // 失败把信息上报
 }
 
-interface IRemoteEventItem {
-  events: Array<'pv'|'click'|'api'|'error'|'*'>;
-  spa?: boolean;
-  $element_type?: string[];
-  pages?: string[];
-}
-interface IRemoteConfigData {
-  enable: boolean;
-  capture: boolean;
-  includes?: IRemoteEventItem[];
-  excludes?: IRemoteEventItem[];
-}
-
 interface IEventCapacity {
   enable: boolean; // 事件能力是否开启
 }
@@ -167,6 +154,28 @@ interface IEventMessageInterceptorOption {
   }
 }
 
+interface IRemoteConfigData {
+  expires_in?: number;
+  data?: string; // 加密脚本
+  v?: string; // 旧版本
+  configs?: {
+    nv?: string, // 新版本
+    disableSDK?: boolean,
+    disableDebugMode?: boolean, // 是否关闭debug模式
+    /**
+     * -1： 开启全埋点
+        0： 关闭全埋点
+        1： 开启appstart(js没有)
+        2： 开启append（js没有）
+        4： 开启点击事件
+        8： 开启pv事件
+     */
+  	autoTrackMode?: number,
+    event_blacklist?: string[],
+    effect_mode?: 1 | 0, // 0- 立马生效 1-下次生效
+  }
+}
+
 interface IOption {
   appId: string; //
   secret: string; // 密钥
@@ -175,11 +184,12 @@ interface IOption {
   log?: boolean|number; // 是否打印日志或者设置最低的日志级别：1-log, 2-info, 3-warn, 4-error
   env?: 'dev'|'release';
   storage?: IStorage;
+  enable?: boolean; // 是否开启，默认true
+  capture?: boolean; // 是否截图
+  event_blacklist?: string[]; // 黑名单事件列表，配置后会禁止采集这些事件
 }
 
 interface IConfig extends IOption {
-  enable?: boolean; // 是否开启全埋点，默认true
-  capture?: boolean; // 是否截图
   pv?: IPageViewEventCapacity;
   click?: IClickEventCapacity;
   api?: IApiEventCapacity;
@@ -189,17 +199,38 @@ interface IConfig extends IOption {
 }
 
 /**
+ * 事件接口
+ */
+interface EventItem {
+  once: boolean;
+  listener: Function;
+}
+
+interface IEventEmitter {
+  on(k: string, fn: Function);
+  once(k: string, fn: Function);
+  emit(k: string, ...rets);
+  off(k: string, fn: Function);
+}
+
+/**
  * 插件接口
  */
-interface ITrackClient {
+interface ITrackClient extends IEventEmitter {
   version: string;
   init(option: IOption): void;
   use(plugin: IBasePlugin): void;
-  beforeReport(fn?): void;
+}
+
+interface IPluginItem {
+  plugin: IBasePlugin;
+  option?: object;
 }
 
 interface IPluginManager {
-  add(client: ITrackClient, plugin: IBasePlugin);
+  add(plugin: IBasePlugin, option?: object);
+  remove(name: string): void;
+  getAllPlugins(): IPluginItem[];
 }
 
 interface IBasePlugin {
@@ -212,4 +243,9 @@ interface IUsePlugin {
   use(plugin: IBasePlugin, option?: any): IBasePlugin;
 }
 
+interface IReporter {
+  report(data: ICommonMessage): void;
+}
 
+
+type IHookBeforeReport = (data: ICommonMessage) => ICommonMessage|false|null|undefined;

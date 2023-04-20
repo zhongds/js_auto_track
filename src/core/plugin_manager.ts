@@ -1,20 +1,37 @@
+import TrackLog from "../plugins/log";
+
 /**
  * 全局插件管理, 基于实例
  */
-class PluginManager {
-  plugins = [];
+export default class PluginManager {
+  plugins = {}; // name为key, value为IPluginItem
 
-  add(client: ITrackClient, plugin: IBasePlugin) {
-    if (this.checkIsPlugin(plugin)) {
-      plugin.setup(client);
-      // this.plugins.push(plugin);
+  add(plugin: IBasePlugin, option?: object) {
+    if (!this.checkIsPlugin(plugin)) {
+      TrackLog.error('plugin is not valid, name: ', ((plugin as any) || {}).name);
+      return;
+    }
+    if (this.plugins[plugin.name]) {
+      TrackLog.error('plugin is existed, name: ', plugin.name);
+      return;
+    }
+    const item: IPluginItem = {
+      plugin,
+      option,
+    }
+    this.plugins[plugin.name] = item;
+  }
+
+  remove(name: string): void {
+    if (name && this.plugins[name]) {
+      delete this.plugins[name];
     }
   }
 
-  beforeReport() {
-    
+  getAllPlugins(): IPluginItem[] {
+    const values = Object.keys(this.plugins).map(k => this.plugins[k]);
+    return values || [];
   }
-
 
   checkIsPlugin(item: any): item is IBasePlugin {
     return 'name' in item && 'setup' in item;

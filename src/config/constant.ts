@@ -26,3 +26,12 @@ export const AUTO_TRACK_CLICK_ATTR = 'data-track-click';
  * 元素配了这个会忽略上报
  */
 export const AUTO_TRACK_CLICK_IGNORE_ATTR = 'data-track-click-ignore';
+
+/**
+ * sdk的生命周期
+ */
+export const CLIENT_LIFECYLE_EVENT = {
+  INIT: 'init',
+  REMOTE_CONFIG_CHANGED: 'remote_config_changed',
+  START: 'start',
+}

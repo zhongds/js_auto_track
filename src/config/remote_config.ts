@@ -32,72 +32,29 @@ export default class RemoteConfig {
     }).catch(err => {
       TrackLog.error('拉取远端配置失败: ', err);
       setConfig({enable: false} as IConfig);
+    }).finally(() => {
       _this.callbackFn();
     })
   }
 
-  private parseConfig(data: string) {
+  private parseConfig(rconf: string) {
     try {
-      const obj = JSON.parse(data) as IRemoteConfigData;
-      const {enable, capture, includes, excludes} = obj;
-      const eventObj = {};
-      const eventKeys = ['pv', 'click', 'api', 'error', 'page_leave'];
-      includes.forEach(item => {
-        (item.events || []).forEach(k => {
-          if (eventKeys.indexOf(k) !== -1) {
-            eventObj[k] = { ...eventObj[k], ...item, enable: true };
-            this.transformIncludeData(eventObj[k]);
-          } else if (k === '*') {
-            eventKeys.forEach(ek => {
-              eventObj[ek] = {...eventObj[ek], ...item, enable: true};
-              this.transformIncludeData(eventObj[ek]);
-            })
-          }
-        })
-      });
-      excludes.forEach(item => {
-        (item.events || []).forEach(k => {
-          if (eventKeys.indexOf(k) !== -1) {
-            if (item.pages) {
-              eventObj[k].exclude_pages = item.pages;
-            }
-          }
-        })
-      });
-      this.dealSpecialEvent(eventObj); // 特殊处理
-      const conf = {
-        enable,
-        capture,
-        ...eventObj,
-      } as IConfig;
+      const obj = JSON.parse(rconf) as IRemoteConfigData;
+      const conf = {} as IConfig;
+      const {data, configs} = obj;
+      if (data) {
+        // TODO lua配置过滤
+      }
+      if (configs) {
+        const {disableSDK, event_blacklist, disableDebugMode} = configs;
+        conf.enable = !disableSDK;
+        conf.env = disableDebugMode ? 'release' : 'dev';
+        conf.event_blacklist = event_blacklist || [];
+      }
       setConfig(conf);
     } catch(err) {
+      // TODO 上报配置失败原因
       TrackLog.error('解析远端配置失败', err);
-      setConfig({enable: false} as IConfig);
-    }
-    this.callbackFn();
-  }
-
-  /**
-   * 转换数据
-   * @param obj 
-   */
-  private transformIncludeData(obj) {
-    delete obj.events;
-    if (obj.pages) {
-      obj.include_pages = obj.pages;
-      delete obj.pages;
-    }
-  }
-
-  /**
-   * 特殊处理
-   * 1. pv没配置，page_leave即使配置了也不生效
-   * @param eventObj 转换后的事件对象
-   */
-  private dealSpecialEvent(eventObj) {
-    if (eventObj.page_leave && !eventObj.pv) {
-      eventObj.page_leave.enable = false;
     }
   }
 }

@@ -1,7 +1,7 @@
 /**
  * 管理全局变量
  */
-import { MemoryCache } from '../plugins/cache';
+import { MemoryCache } from '../core/cache';
 import {generateSpanId, generateTraceId} from '../plugins/trace/generator';
 import { getSearchKV } from '../utils/tool';
 import { URL_SPAN_ID_KEY, URL_TRACE_ID_KEY } from './constant';
