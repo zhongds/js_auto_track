@@ -1,6 +1,6 @@
-import { IConfig, setConfig } from "../config/config";
+import { setConfig } from "./config";
 import { get } from "../request/request";
-import TrackLog from "./log";
+import TrackLog from "../plugins/log";
 
 /**
  * 远端配置管理

@@ -1,5 +1,5 @@
 import { MemoryCache } from './plugins/cache';
-import { Config, IOption, setConfig } from './config/config';
+import { Config, setConfig } from './config/config';
 import { setGlobalCache } from './config/global';
 import { handleResource } from './handler';
 import ApiPerf from './events/Api_perf';
@@ -9,7 +9,7 @@ import { RouteIntercept } from './plugins/trace';
 import { setDeviceIdFn, setGuidFn, setLoginUserIdFn, setUserSessionIdFn } from './models/message';
 import PageViewPerf from './events/page_view';
 import ClickEvent from './events/click_event';
-import RemoteConfig from './plugins/remote_config';
+import RemoteConfig from './config/remote_config';
 import 'es6-promise/auto';
 import TrackLog from './plugins/log';
 import { setUserCommonProperty } from './models/user_property';

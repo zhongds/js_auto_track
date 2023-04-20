@@ -167,11 +167,33 @@ interface IEventMessageInterceptorOption {
   }
 }
 
+interface IOption {
+  appId: string; //
+  secret: string; // 密钥
+  reportUrl: string; //上报地址
+  remoteConfigUrl: string; // 远端配置地址
+  log?: boolean|number; // 是否打印日志或者设置最低的日志级别：1-log, 2-info, 3-warn, 4-error
+  env?: 'dev'|'release';
+  storage?: IStorage;
+}
+
+interface IConfig extends IOption {
+  enable?: boolean; // 是否开启全埋点，默认true
+  capture?: boolean; // 是否截图
+  pv?: IPageViewEventCapacity;
+  click?: IClickEventCapacity;
+  api?: IApiEventCapacity;
+  error?: IErrorEventCapacity;
+  res?: IResEventCapacity;
+  page_leave?: IPageLeaveEventCapacity;
+}
+
 /**
  * 插件接口
  */
 interface ITrackClient {
   version: string;
+  init(option: IOption): void;
   use(plugin: IBasePlugin): void;
   beforeReport(fn?): void;
 }
