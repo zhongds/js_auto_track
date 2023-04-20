@@ -220,6 +220,7 @@ interface ITrackClient extends IEventEmitter {
   version: string;
   init(option: IOption): void;
   use(plugin: IBasePlugin): void;
+  triggerHook(k: string, ...args): ICommonMessage|null|undefined|false;
 }
 
 interface IPluginItem {

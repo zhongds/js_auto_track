@@ -1,4 +1,4 @@
-import { MemoryCache } from './core/cache';
+import { MemoryCache } from './core/base/cache';
 import { Config, setConfig } from './config/config';
 import { setGlobalCache } from './config/global';
 import { handleResource } from './handler';

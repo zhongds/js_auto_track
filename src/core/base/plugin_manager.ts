@@ -1,4 +1,4 @@
-import TrackLog from "../plugins/log";
+import TrackLog from "../../plugins/log";
 
 /**
  * 全局插件管理, 基于实例

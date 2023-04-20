@@ -1,8 +1,8 @@
-import { Config } from "../config/config";
+import { Config } from "../../config/config";
 import md5 from 'md5';
-import { getGlobalCache } from "../config/global";
-import TrackLog from "../plugins/log";
-import { CLIENT_LIFECYLE_EVENT } from "../config/constant";
+import { getGlobalCache } from "../../config/global";
+import TrackLog from "../../plugins/log";
+import { CLIENT_LIFECYLE_EVENT } from "../../config/constant";
 import {gzip} from 'pako';
 
 const ReportDataRetryKey = '$track_sdk_report_data_retry'; // 重试
@@ -26,7 +26,8 @@ export default class Reporter {
       return;
     }
 
-    this.client.hookBeforeReport(data)
+    const newData = this.client.triggerHook('before_report', data);
+    if (!newData) return;
   
     // TODO 插件里单独执行
     // if (data.$event_type === PV_EVENT_NAME || data.$event_type === CLICK_EVENT_NAME) {
@@ -34,9 +35,9 @@ export default class Reporter {
     // }
     
     if (window.navigator && "function" == typeof window.navigator.sendBeacon) {
-      window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(data))
+      window.navigator.sendBeacon(Config.reportUrl, JSON.stringify(newData))
     } else {
-      const url = this.createUrl(data);
+      const url = this.createUrl(newData);
       this.sendImg(url)
     }
   }

@@ -1,6 +1,5 @@
 /**
- * 拦截，跟监听事件机制差不多
- * 唯一区别是trigger执行逻辑变化：多个监听方法，一个监听方法执行完的结果会串行给到下一个监听方法执行
+ * 监听事件
  */
 export default class EventEmitter {
   listeners = Object.create(null) as {[key: string]: EventItem[]};
