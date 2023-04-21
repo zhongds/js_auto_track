@@ -1,4 +1,4 @@
-import TrackLog from "../../plugins/log";
+import TrackLog from "../../models/log";
 
 /**
  * 全局插件管理, 基于实例
@@ -33,7 +33,7 @@ export default class PluginManager {
     return values || [];
   }
 
-  checkIsPlugin(item: any): item is IBasePlugin {
+  private checkIsPlugin(item: any): item is IBasePlugin {
     return 'name' in item && 'setup' in item;
   }
 }

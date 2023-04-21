@@ -1,8 +1,8 @@
 import { Config } from "../../config/config";
 import md5 from 'md5';
 import { getGlobalCache } from "../../config/global";
-import TrackLog from "../../plugins/log";
-import { CLIENT_LIFECYLE_EVENT } from "../../config/constant";
+import TrackLog from "../../models/log";
+import { CLIENT_HOOK_EVENT, CLIENT_LIFECYLE_EVENT } from "../../config/constant";
 import {gzip} from 'pako';
 
 const ReportDataRetryKey = '$track_sdk_report_data_retry'; // 重试
@@ -26,8 +26,10 @@ export default class Reporter {
       return;
     }
 
-    const newData = this.client.triggerHook('before_report', data);
+    const newData = this.client.triggerHook(CLIENT_HOOK_EVENT.BEFORE_REPORT, data);
     if (!newData) return;
+
+    this.client.emit(CLIENT_LIFECYLE_EVENT.BEFORE_REPORT, newData);
   
     // TODO 插件里单独执行
     // if (data.$event_type === PV_EVENT_NAME || data.$event_type === CLICK_EVENT_NAME) {

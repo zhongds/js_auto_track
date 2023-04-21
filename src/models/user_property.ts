@@ -1,4 +1,4 @@
-import TrackLog from "../plugins/log";
+import TrackLog from "./log";
 import { checkIsObject } from "../utils/tool";
 
 

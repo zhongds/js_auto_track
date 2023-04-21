@@ -1,6 +1,6 @@
 import { Config } from "../config/config";
 import { getUserCommonProperty } from "../models/user_property";
-import TrackLog from "../plugins/log";
+import TrackLog from "../models/log";
 import { IPostOption, post } from "./request";
 
 let uploadUrl = {

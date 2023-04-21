@@ -1,7 +1,8 @@
-import { genSpanId, getParentPageSpanId, getTraceId } from "../config/global";
-import { getUserCommonProperties, setUserCommonProperty } from "./user_property";
-import { getBrowserName, getBrowserVersion, getOsInfo } from "../utils/system";
-import { randomString } from "../utils/tool";
+import { CLIENT_HOOK_EVENT, CLIENT_LIFECYLE_EVENT } from "../../config/constant";
+import { genSpanId, getParentPageSpanId, getTraceId } from "../../config/global";
+import { getUserCommonProperties, setUserCommonProperty } from "../../models/user_property";
+import { getBrowserName, getBrowserVersion, getOsInfo } from "../../utils/system";
+import { randomString } from "../../utils/tool";
 
 const SDK_ANONYMOUS_ID_TAG = '$track_sdk_anonymous_id';
 
@@ -55,20 +56,38 @@ export function setGuidFn(fn: UserPropertyType) {
   setUserCommonProperty('$guid', fn);
 }
 
-export function getCommonMessage(): ICommonMessage {
-  const userCommProp = getUserCommonProperties();
-  CommonMessage = {
-    ...CommonMessage,
-    $page_id: location.href,
-    $url: location.href,
-    $domain: location.host,
-    $referrer: document.referrer,
-    $title: document.title,
-    $time: Date.now(),
-    $trace_id: getTraceId(),
-    $span_id: genSpanId(),
-    $parent_span_id: getParentPageSpanId(),
-    ...userCommProp,
+export class CommonMessager implements ICommonMessager {
+  client: ITrackClient;
+  constructor(client: ITrackClient) {
+    this.client = client;
   }
-  return CommonMessage;
+
+  /**
+   * 获取通用属性
+   * @param eventType 
+   * @returns 如果返回Falsy, 则放弃上报
+   */
+  getCommonMessage(eventType: EventType|APMType): ICommonMessage|Falsy {
+    const userCommProp = getUserCommonProperties();
+    CommonMessage = {
+      ...CommonMessage,
+      $event_type: eventType,
+      $page_id: location.href,
+      $url: location.href,
+      $domain: location.host,
+      $referrer: document.referrer,
+      $title: document.title,
+      $time: Date.now(),
+      $trace_id: getTraceId(),
+      $span_id: genSpanId(),
+      $parent_span_id: getParentPageSpanId(),
+      ...userCommProp,
+    }
+    const res = this.client.triggerHook(CLIENT_HOOK_EVENT.BEFORE_BUILD, CommonMessage);
+    if (res) {
+      this.client.emit(CLIENT_LIFECYLE_EVENT.BEFORE_BUILD, res);
+    }
+    return res;
+  }
+
 }

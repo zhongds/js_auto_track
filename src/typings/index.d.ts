@@ -163,6 +163,7 @@ interface IRemoteConfigData {
     disableSDK?: boolean,
     disableDebugMode?: boolean, // 是否关闭debug模式
     /**
+     * TODO 预留
      * -1： 开启全埋点
         0： 关闭全埋点
         1： 开启appstart(js没有)
@@ -172,6 +173,7 @@ interface IRemoteConfigData {
      */
   	autoTrackMode?: number,
     event_blacklist?: string[],
+    // TODO 预留
     effect_mode?: 1 | 0, // 0- 立马生效 1-下次生效
   }
 }
@@ -213,14 +215,33 @@ interface IEventEmitter {
   off(k: string, fn: Function);
 }
 
+interface IHooker {
+  hook(k: string, fn: Function):void;
+
+  
+
+  removeHook(k: string, fn: Function): void;
+}
+
+interface ICommonMessager {
+  getCommonMessage(eventType: EventType|APMType): ICommonMessage|Falsy;
+}
 /**
- * 插件接口
+ * 接口
  */
-interface ITrackClient extends IEventEmitter {
+interface ITrackClient extends IEventEmitter, ICommonMessager, IHooker {
   version: string;
+  config: IConfig;
   init(option: IOption): void;
   use(plugin: IBasePlugin): void;
-  triggerHook(k: string, ...args): ICommonMessage|null|undefined|false;
+  hook(k: string, fn: IHookBeforeReport): void;
+  removeHook(k: string, fn: Function): void;
+  triggerHook(k: string, ...args): ICommonMessage|Falsy;
+  /**
+   * 上报接口
+   * @param msg 
+   */
+  toReport(msg: ICommonMessage);
 }
 
 interface IPluginItem {
@@ -235,8 +256,25 @@ interface IPluginManager {
 }
 
 interface IBasePlugin {
+  /**
+   * 插件名，唯一
+   */
   name: string;
-  setup(client: ITrackClient, option?: object): void;
+  /**
+   * 是否安装
+   */
+  _setuped: boolean;
+  
+  /**
+   * 启动插件（多次调用，只启动一次）
+   * @param client 
+   * @param option 
+   * @returns true-正常启动 false-已经安装过了
+   */
+  setup(client: ITrackClient, option?: object): boolean;
+  /**
+   * 卸载插件（插件卸载有副作用需要实现这个方法）
+   */
   destroy(): void;
 }
 
@@ -248,5 +286,6 @@ interface IReporter {
   report(data: ICommonMessage): void;
 }
 
+type Falsy = null|undefined|false;
 
-type IHookBeforeReport = (data: ICommonMessage) => ICommonMessage|false|null|undefined;
+type IHookBeforeReport = (data: ICommonMessage) => ICommonMessage|Falsy;

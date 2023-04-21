@@ -1,6 +1,6 @@
 import { setConfig } from "./config";
 import { get } from "../request/request";
-import TrackLog from "../plugins/log";
+import TrackLog from "../models/log";
 
 /**
  * 远端配置管理

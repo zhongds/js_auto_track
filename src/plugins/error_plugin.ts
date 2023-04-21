@@ -1,31 +1,28 @@
-import { ERROR_EVENT_NAME } from "../config/constant";
-import { getCommonMessage } from "../models/message";
-import { report } from "../reporter";
+import { ERROR_EVENT_TYPE } from "../config/constant";
 import { off, on } from "../utils/tool";
+import BasePlugin from "./base_plugin";
 
-export default class WrapError {
-  // 只初始化一次
-  private static isInit: boolean = false;
+class WrapErrorPlugin extends BasePlugin {
+
+  name: string = 'wrap_error_plugin';
   // 自动采集数据
-  private static isAutoTrack: boolean = true;
-  private static errorConfig: IErrorEventCapacity;
-  static autoTrack(conf: IErrorEventCapacity) {
-    if (!conf || !conf.enable || WrapError.isInit) return;
-    WrapError.isInit = true;
-    WrapError.errorConfig = conf;
-    const ins = new WrapError();
-    ins.init();
+  private isAutoTrack: boolean = true;
+  private errorConfig: IErrorEventCapacity;
+  setup(client: ITrackClient, conf: IErrorEventCapacity) {
+    if (super.setup(client, conf)) {
+      if (!conf || !conf.enable) return;
+      this.errorConfig = conf;
+      this.init();
+    }
+    return true;
   }
 
   /**
-   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   * 
    */
-  static stopTrack() {
-    WrapError.isAutoTrack = false;
-  }
-
-  static resumeTrack() {
-    WrapError.isAutoTrack = true;
+  destroy() {
+    super.destroy();
+    this.isAutoTrack = false;
   }
 
   /**
@@ -39,7 +36,7 @@ export default class WrapError {
   }
 
   handleError(event: Event) {
-    if (!WrapError.isAutoTrack) return;
+    if (!this.isAutoTrack || !this.client) return;
     let result;
     switch (event.type) {
       case 'error': {
@@ -52,18 +49,20 @@ export default class WrapError {
       }
       default:
         break;
-      }
-    report(result);
+    }
+    if (result) {
+      this.client.toReport(result);
+    }
   }
 
   // 捕获js异常
-  extractJSError(e: ErrorEvent): IErrorMessage{
-    const commonMsg = getCommonMessage();
+  extractJSError(e: ErrorEvent): IErrorMessage|Falsy{
+    const commonMsg = this.client.getCommonMessage(ERROR_EVENT_TYPE);
+    if (!commonMsg) return null;
     const msg = e.message || '';
     const stackStr = e.error.stack || '';
     const data: IErrorMessage = {
       ...commonMsg,
-      $event_type: ERROR_EVENT_NAME,
       $category_id: 'jsError',
       $err_msg: msg && msg.substring(0, 1e3), // 信息
       $err_detail: stackStr && stackStr.substring(0, 1e3), // 错误栈
@@ -75,13 +74,13 @@ export default class WrapError {
   }
 
   // 捕获资源异常
-  extractResourceError(e: Event): IErrorMessage{
-    const commonMsg = getCommonMessage();
+  extractResourceError(e: Event): IErrorMessage | Falsy{
+    const commonMsg = this.client.getCommonMessage(ERROR_EVENT_TYPE);
+    if (!commonMsg) return null;
     const target = e.target as any;
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
-        $event_type: ERROR_EVENT_NAME,
         $category_id: 'resource_error',
         $err_msg: target.outerHTML,
         $err_file: target.src,
@@ -92,12 +91,13 @@ export default class WrapError {
   }
 
   // 捕获promise异常
-  extractPromiseError(e: any): IErrorMessage{
-    const commonMsg = getCommonMessage()
+  extractPromiseError(e: any): IErrorMessage|Falsy{
+    const commonMsg = this.client.getCommonMessage(ERROR_EVENT_TYPE);
+    if (!commonMsg) return null;
     const data: IErrorMessage = {
       ...commonMsg,
       ...{
-        $event_type: ERROR_EVENT_NAME,
+        $event_type: ERROR_EVENT_TYPE,
         $category_id: 'promise_error',
         $err_msg: e.reason,
       }
@@ -105,3 +105,5 @@ export default class WrapError {
     return data;
   }
 }
+
+export default new WrapErrorPlugin();

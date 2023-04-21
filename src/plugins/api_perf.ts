@@ -1,35 +1,34 @@
-import { API_EVENT_NAME } from "../config/constant";
-import { getCommonMessage } from "../models/message";
-import { report } from "../reporter";
+import { API_EVENT_TYPE } from "../config/constant";
+import BasePlugin from "./base_plugin";
 
 const RESPONSE_MAX_LENGTH = 1000;
 
 /**
  * http拦截
  */
-export default class ApiPerf {
-  // 只初始化一次
-  private static isInit: boolean = false;
+class ApiPerf extends BasePlugin {
   // 自动采集数据
-  private static isAutoTrack: boolean = true;
-  private static apiConfig: IApiEventCapacity;
-  static autoTrack(conf: IApiEventCapacity) {
-    if (!conf || !conf.enable || ApiPerf.isInit) return;
-    ApiPerf.isInit = true;
-    ApiPerf.apiConfig = conf;
-    const ins = new ApiPerf();
-    ins.init();
+  private isAutoTrack: boolean = true;
+  private apiConfig: IApiEventCapacity;
+
+  name: string = 'api_perf_plugin';
+
+  setup(client: ITrackClient, conf: IApiEventCapacity): boolean {
+    if (super.setup(client, conf)) {
+      if (!conf || !conf.enable) return false;
+      this.isAutoTrack = true;
+      this.apiConfig = conf;
+      this.init();
+    }
+    return true;
   }
 
   /**
-   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   * 
    */
-  static stopTrack() {
-    ApiPerf.isAutoTrack = false;
-  }
-
-  static resumeTrack() {
-    ApiPerf.isAutoTrack = true;
+  destroy() {
+    super.destroy();
+    this.isAutoTrack = false;
   }
 
   private init() {
@@ -38,14 +37,14 @@ export default class ApiPerf {
   }
 
   handleApiPerf(apiData: IApiPerfData) {
-    if (!ApiPerf.isAutoTrack) return;
-    const comMsg = getCommonMessage();
+    if (!this.isAutoTrack || !this.client) return;
+    const comMsg = this.client.getCommonMessage(API_EVENT_TYPE);
+    if (!comMsg) return;
     const data: IApiPerfMessage = {
       ...comMsg,
-      $event_type: API_EVENT_NAME,
       ...apiData,
     }
-    report(data);
+    this.client.toReport(data);
   }
 
   hookFetch() {
@@ -128,3 +127,4 @@ export default class ApiPerf {
   }
 }
 
+export default new ApiPerf();

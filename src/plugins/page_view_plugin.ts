@@ -1,9 +1,8 @@
-import { PV_EVENT_NAME } from "../config/constant";
+import { PV_EVENT_TYPE } from "../config/constant";
 import { setPageLoadendTime, setPageSpanId } from "../config/global";
-import TrackLog from "./log";
-import { report } from "../reporter";
+import TrackLog from "../models/log";
 import { checkIsReport, on } from "../utils/tool";
-import { getCommonMessage } from "../models/message";
+import BasePlugin from "./base_plugin";
 
 // 兼容判断
 const supported = {
@@ -14,28 +13,28 @@ const supported = {
   PerformanceNavigationTiming: 'PerformanceNavigationTiming' in window,
 };
 
-class PageViewPlugin implements IBasePlugin {
-  // 只初始化一次
-  private static isInit: boolean = false;
+class PageViewPlugin extends BasePlugin {
   // 自动采集数据
   private isAutoTrack: boolean = true;
   private pvConfig = {} as IPageViewEventCapacity;
 
   name: string = 'page_view_plugin';
 
-  setup(client: ITrackClient, conf: IPageViewEventCapacity): void {
-    if (!conf || !conf.enable || PageViewPlugin.isInit) return;
-    PageViewPlugin.isInit = true;
-    this.isAutoTrack = true;
-    this.pvConfig = conf;
-    this.init();
+  setup(client: ITrackClient, conf: IPageViewEventCapacity): boolean {
+    if (super.setup(client, conf)) {
+      if (!conf || !conf.enable) return false;
+      this.isAutoTrack = true;
+      this.pvConfig = conf;
+      this.init();
+    }
+    return true;
   }
 
   /**
    * 
    */
   destroy() {
-    PageViewPlugin.isInit = false;
+    super.destroy();
     this.isAutoTrack = false;
   }
 
@@ -53,7 +52,7 @@ class PageViewPlugin implements IBasePlugin {
    */
   private setPage() {
     // 过滤数据
-    if (!this.isAutoTrack) {
+    if (!this.isAutoTrack || !this.client) {
       TrackLog.log('pv不采集');
       return;
     }
@@ -66,7 +65,7 @@ class PageViewPlugin implements IBasePlugin {
    * @returns 
    */
   private checkDataReport(data: IPageViewMessage): boolean {
-    if (this.pvConfig) {
+    if (data && this.pvConfig) {
       const {include_pages, exclude_pages} = this.pvConfig;
       return checkIsReport(include_pages, exclude_pages, data.$url);
     }
@@ -89,7 +88,7 @@ class PageViewPlugin implements IBasePlugin {
         return;
       }
       setPageSpanId(data.$span_id);
-      report(data);
+      this.client.toReport(data);
     } else {
       const timer = setTimeout(() => {
         clearTimeout(timer);
@@ -99,10 +98,10 @@ class PageViewPlugin implements IBasePlugin {
   }
 
   private genReportData(): IPageViewMessage {
-    const comMsg = getCommonMessage();
+    const comMsg = this.client.getCommonMessage(PV_EVENT_TYPE);
+    if (!comMsg) return null;
     const data = {
       ...comMsg,
-      $event_type: PV_EVENT_NAME,
     } as IPageViewMessage;
     
     if (this.pvConfig.isPerf) {

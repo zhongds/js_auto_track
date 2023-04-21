@@ -1,9 +1,10 @@
 import { Config, setConfig } from "../../config/config";
-import { CLIENT_LIFECYLE_EVENT } from "../../config/constant";
+import { CLIENT_LIFECYLE_EVENT, USER_DEFINED_EVENT_TYPE } from "../../config/constant";
 import RemoteConfig from "../../config/remote_config";
-import TrackLog from "../../plugins/log";
+import TrackLog from "../../models/log";
 import { checkIsObject } from "../../utils/tool";
 import Hooker from "./hooker";
+import { CommonMessager } from "./message";
 import PluginManager from "./plugin_manager";
 import Reporter from "./reporter";
 import EventEmitter from "./simp_event_emitter";
@@ -16,12 +17,14 @@ export default class TrackClientBase extends EventEmitter implements ITrackClien
   // 配置信息
   config: IConfig;
 
+  messager: ICommonMessager;
   reporter: IReporter;
   hooker: Hooker;
 
   pluginManagerIns: IPluginManager;
   constructor(option?: object) {
     super();
+    this.messager = new CommonMessager(this);
     this.reporter = new Reporter(this);
     this.hooker = new Hooker();
     this.pluginManagerIns = new PluginManager();
@@ -64,7 +67,7 @@ export default class TrackClientBase extends EventEmitter implements ITrackClien
    * 开启各插件功能
    * @returns 
    */
-  private start() {
+  start() {
     TrackLog.info("配置====", Config);
     if (!Config.enable) return;
 
@@ -75,12 +78,20 @@ export default class TrackClientBase extends EventEmitter implements ITrackClien
     this.emit(CLIENT_LIFECYLE_EVENT.START);
   }
 
-  hookBeforeReport(fn: IHookBeforeReport): void {
-    this.hooker.hook('before_report', fn);
+  hook(k: string, fn: IHookBeforeReport): void {
+    this.hooker.hook(k, fn);
   }
 
-  triggerHook(k: string, ...args): ICommonMessage|null|undefined|false {
-    return this.hooker.triggerInOrder(k, ...args);
+  removeHook(k: string, fn: Function): void {
+    this.hooker.removeHook(k, fn);
+  }
+
+  triggerHook(k: string, ...args): ICommonMessage|Falsy {
+    return this.hooker.triggerHook(k, ...args);
+  }
+
+  getCommonMessage(eventType: EventType|APMType): ICommonMessage|Falsy {
+    return this.messager.getCommonMessage(eventType);
   }
 
   /**
@@ -89,6 +100,22 @@ export default class TrackClientBase extends EventEmitter implements ITrackClien
    */
   toReport(msg: ICommonMessage) {
     this.reporter.report(msg);
+  }
+
+  track(eventName: string, userProps: UserMessage) {
+    if (!eventName || checkIsObject(userProps)) return;
+    const msg = this.getCommonMessage(USER_DEFINED_EVENT_TYPE);
+    if (!msg) {
+      TrackLog.warn('自定义事件被拦截');
+      return;
+    }
+    const data: IUserDefinedEventMessage = {
+      ...msg,
+      $event_name: eventName,
+      $event_type: USER_DEFINED_EVENT_TYPE,
+      ...userProps,
+    };
+    this.toReport(data);
   }
 }
 

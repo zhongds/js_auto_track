@@ -6,37 +6,32 @@
  */
 
 import { COLLECT_CUR_OR_UP_ELM_TYPE, MAX_UP_ELM_LEVEL } from "../config/config";
-import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR, CLICK_EVENT_NAME } from "../config/constant";
+import { AUTO_TRACK_CLICK_ATTR, AUTO_TRACK_CLICK_IGNORE_ATTR, CLICK_EVENT_TYPE } from "../config/constant";
 import { setClickSpanId } from "../config/global";
-import TrackLog from "../plugins/log";
-import { getCommonMessage } from "../models/message";
-import { hookAElClick } from "../plugins/trace";
-import { report } from "../reporter";
+import TrackLog from "../models/log";
+import { hookAElClick } from "../models/trace";
 import { checkIsReport, getElmSelector, on } from "../utils/tool";
+import BasePlugin from "./base_plugin";
 
-export default class ClickEvent {
-  // 只初始化一次
-  private static isInit: boolean = false;
+class ClickEventPlugin extends BasePlugin {
   // 自动采集数据
-  private static isAutoTrack: boolean = true;
-  private static clickConfig: IClickEventCapacity;
-  static autoTrack(conf: IClickEventCapacity) {
-    if (!conf || !conf.enable || ClickEvent.isInit) return;
-    ClickEvent.isInit = true;
-    ClickEvent.clickConfig = conf;
-    const ins = new ClickEvent();
-    ins.init();
+  private isAutoTrack: boolean = true;
+  private clickConfig: IClickEventCapacity;
+  autoTrack(client: ITrackClient, conf: IClickEventCapacity) {
+    if (super.setup(client, conf)) {
+      if (!conf || !conf.enable) return false;
+      this.clickConfig = conf;
+      this.init();
+      }
+    return true;
   }
 
   /**
-   * 不收集收据了（重写的方法不恢复原来的，以防其他库再次重写了方法被我们覆盖了）
+   * 
    */
-  static stopTrack() {
-    ClickEvent.isAutoTrack = false;
-  }
-
-  static resumeTrack() {
-    ClickEvent.isAutoTrack = true;
+  destroy() {
+    super.destroy();
+    this.isAutoTrack = false;
   }
 
   private init() {
@@ -50,25 +45,24 @@ export default class ClickEvent {
    * @returns 
    */
    private checkDataReport(data: IClickEventMessage): boolean {
-    if (ClickEvent.clickConfig) {
-      const {include_pages, exclude_pages} = ClickEvent.clickConfig;
+    if (this.clickConfig) {
+      const {include_pages, exclude_pages} = this.clickConfig;
       return checkIsReport(include_pages, exclude_pages, data.$url);
     }
     return false;
   }
 
   private handleClick(e: Event) {
-    if (ClickEvent.isAutoTrack) {
-      const data = this.getClickEventMessage(e);
+    if (!this.isAutoTrack || !this.client) return;
+    const data = this.getClickEventMessage(e);
 
-      if (!data || !this.checkDataReport(data)) {
-        TrackLog.log('该点击元素不采集', e.target);
-        return;
-      }
-
-      setClickSpanId(data.$span_id);
-      report(data);
+    if (!data || !this.checkDataReport(data)) {
+      TrackLog.log('该点击元素不采集', e.target);
+      return;
     }
+
+    setClickSpanId(data.$span_id);
+    this.client.toReport(data);
   }
 
   /**
@@ -83,18 +77,18 @@ export default class ClickEvent {
     }
   }
 
-  private getClickEventMessage(e: Event): IClickEventMessage|null {
+  private getClickEventMessage(e: Event): IClickEventMessage|Falsy {
     const target: Element|null = this.getTargetElement(e.target);
     if (!target) {
       return null;
     }
-    const comMsg = getCommonMessage();
+    const comMsg = this.client.getCommonMessage(CLICK_EVENT_TYPE);
+    if (!comMsg) return null;
     if (target.nodeName.toLowerCase() === 'a') {
       hookAElClick(e, target, comMsg.$span_id);
     }
     const data: IClickEventMessage = {
       ...comMsg,
-      $event_type: CLICK_EVENT_NAME,
       $element_type: target.nodeName.toLowerCase(),
       $element_id: target.id,
       $element_name: target.getAttribute('name') || '',
@@ -104,7 +98,7 @@ export default class ClickEvent {
       $element_page_x: (e as PointerEvent).pageX,
       $element_page_y: (e as PointerEvent).pageY,
     }
-    const {track_attr} = ClickEvent.clickConfig;
+    const {track_attr} = this.clickConfig;
     if (track_attr && track_attr.length > 0) {
       track_attr.forEach(k => {
         const value = target.getAttribute(k);
@@ -125,7 +119,7 @@ export default class ClickEvent {
    * @returns 
    */
   private getTargetElement(e: EventTarget): Element|null {
-    const {element_types} = ClickEvent.clickConfig;
+    const {element_types} = this.clickConfig;
     if (!(e instanceof Element) || !element_types || element_types.length === 0) {
       return null
     }
@@ -175,3 +169,5 @@ export default class ClickEvent {
     return attr !== null && attr !== undefined
   }
 }
+
+export default new ClickEventPlugin();
