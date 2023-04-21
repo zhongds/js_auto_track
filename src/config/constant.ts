@@ -30,17 +30,20 @@ export const AUTO_TRACK_CLICK_ATTR = 'data-track-click';
 export const AUTO_TRACK_CLICK_IGNORE_ATTR = 'data-track-click-ignore';
 
 /**
- * sdk的生命周期
+ * sdk的生命周期, 可监听
  */
 export const CLIENT_LIFECYLE_EVENT = {
   INIT: 'init', // 初始化本地配置
-  REMOTE_CONFIG_CHANGED: 'remote_config_changed', // 拉取远端配置后触发
+  REMOTE_CONFIG_CHANGED: 'remote_config_changed', // 拉取远端配置后触发，可拿到新旧配置
   START: 'start', // 加载各种插件
   BEFORE_BUILD: 'before_build', // 生成事件信息，触发时机：获取到commonMessage的时候
   BEFORE_REPORT: 'before_report', // 上报之前
 }
 
+/**
+ * 可拦截事件，修改上报的数据或不上报
+ */
 export const CLIENT_HOOK_EVENT = {
-  BEFORE_BUILD: 'before_build',
-  BEFORE_REPORT: 'before_report',
+  BEFORE_BUILD: 'before_build', // 事件生成之前，可以拿到基础的事件信息，返回Falsy不上报
+  BEFORE_REPORT: 'before_report', // 事件上报前，可以拿到即将上报的数据，返回Falsy不上报
 }

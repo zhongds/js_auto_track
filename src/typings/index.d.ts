@@ -207,23 +207,22 @@ interface EventItem {
   once: boolean;
   listener: Function;
 }
-
+// 监听
 interface IEventEmitter {
   on(k: string, fn: Function);
   once(k: string, fn: Function);
   emit(k: string, ...rets);
   off(k: string, fn: Function);
 }
-
+// 拦截
 interface IHooker {
-  hook(k: string, fn: Function):void;
-
-  
-
+  hook(k: string, fn: IHookBeforeReport): void;
   removeHook(k: string, fn: Function): void;
+  triggerHook(k: string, ...args): ICommonMessage|Falsy;
 }
 
 interface ICommonMessager {
+  // 获取通用内置属性
   getCommonMessage(eventType: EventType|APMType): ICommonMessage|Falsy;
 }
 /**
@@ -234,9 +233,7 @@ interface ITrackClient extends IEventEmitter, ICommonMessager, IHooker {
   config: IConfig;
   init(option: IOption): void;
   use(plugin: IBasePlugin): void;
-  hook(k: string, fn: IHookBeforeReport): void;
-  removeHook(k: string, fn: Function): void;
-  triggerHook(k: string, ...args): ICommonMessage|Falsy;
+  
   /**
    * 上报接口
    * @param msg 
@@ -257,23 +254,18 @@ interface IPluginManager {
 
 interface IBasePlugin {
   /**
-   * 插件名，唯一
+   * 插件名，唯一，必须
    */
   name: string;
   /**
-   * 是否安装
-   */
-  _setuped: boolean;
-  
-  /**
-   * 启动插件（多次调用，只启动一次）
+   * 启动插件（多次调用，只启动一次），必须
    * @param client 
    * @param option 
    * @returns true-正常启动 false-已经安装过了
    */
   setup(client: ITrackClient, option?: object): boolean;
   /**
-   * 卸载插件（插件卸载有副作用需要实现这个方法）
+   * 卸载插件（插件卸载有副作用需要实现这个方法），可选
    */
   destroy(): void;
 }

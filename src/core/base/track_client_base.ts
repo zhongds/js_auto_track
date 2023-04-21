@@ -54,7 +54,7 @@ export default class TrackClientBase extends EventEmitter implements ITrackClien
         const newConfigStr = JSON.stringify(configStr);
         if (newConfigStr !== configStr) {
           // TODO 上报配置 $RemoteConfigChanged
-          this.emit(CLIENT_LIFECYLE_EVENT.REMOTE_CONFIG_CHANGED, JSON.parse(configStr), JSON.parse(newConfigStr));
+          this.emit(CLIENT_LIFECYLE_EVENT.REMOTE_CONFIG_CHANGED, JSON.parse(newConfigStr), JSON.parse(configStr));
         }
         this.start();
       })
@@ -71,11 +71,12 @@ export default class TrackClientBase extends EventEmitter implements ITrackClien
     TrackLog.info("配置====", Config);
     if (!Config.enable) return;
 
+    this.emit(CLIENT_LIFECYLE_EVENT.START);
+
     const arr = this.pluginManagerIns.getAllPlugins();
     if (arr && Array.isArray(arr)) {
       arr.forEach(item => item.plugin.setup(this, item.option));
     }
-    this.emit(CLIENT_LIFECYLE_EVENT.START);
   }
 
   hook(k: string, fn: IHookBeforeReport): void {
